@@ -1,0 +1,34 @@
+
+digraph{
+rankdir=LR;
+compound=true;
+
+title=JASPAR_target_model
+  
+ subgraph  cluster_0 { // the genomic region
+	label=gene_upstream_region
+	"BNODE:gene_upstream_region" -> "gene_upstream_region" [label="rdfs:label"]
+	"BNODE:gene_upstream_region" -> "SO:five_prime_flanking_region" [label="rdf:type"]
+	"BNODE:gene_upstream_region" -> "1000 (region extent bp)" [label="GENO:has_extent"]
+	"BNODE:gene_upstream_region" -> "Candidate SO:TF_binding_sites" [label="rdf:comment"]	
+ }
+
+ subgraph cluster_1 { // set of motifs
+	label=motif_set	
+	"BNODE:motif_set" -> "motif_set_sig"[label="rdfs:label"]
+	"BNODE:motif_set" -> "3 (flavors)"  [label="rdf:value"]
+ }
+
+ subgraph cluster_2 { // motif itself
+	label=motif
+	"JASPAR:motif" -> "SO:nucleotide_motif" [label="rdf:type"]
+	"JASPAR:motif" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
+	"JASPAR:motif" -> "motif"[label="rdfs:label"]
+ }
+
+ "NCBIGene_123" -> "BNODE:gene_upstream_region" [label="SO:adjacent_to",lhead="cluster_0"]
+ "BNODE:gene_upstream_region" -> "BNODE:motif_set" [label="SO:overlaps", lhead=cluster_1]
+ "BNODE:motif_set" -> "BNODE:motif_set"  [label="FOO:has_subset"]
+ "BNODE:motif_set" -> "JASPAR:motif" [label="FOO:has_element", lhead=cluster_2] 
+ //"BNODE:gene_upstream_region" -> "JASPAR:motif" [label="FOO:has_some",ltail=cluster_0,lhead=cluster_2]
+}
