@@ -105,6 +105,7 @@ zcat upstream1000.fa.gz | grep "^>" | head
 but strand may not matter in this case. 
 i.e transcription factor may need not be on the same strand 
 as the gene it is regulating.
+(update: decided it may matter wrt the sense of the gene and ordering of motifs)
 
 a bed file would look like
 
@@ -197,8 +198,6 @@ To get at how many tx_n within 1,2,5 kbp of gene_123?
 uniq -c refseq_motif_1k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_1k_count.tab
 uniq -c refseq_motif_2k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_2k_count.tab
 uniq -c refseq_motif_5k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_5k_count.tab
-
-
 
 what genes have the same set of tx factors as this gene? 
 
@@ -1232,13 +1231,13 @@ cut -f2 gene_mset_5k.tab| sort -u | wc -l
 7672
 
 time \
-cut -f2 gene_mset_1k.tab| sort -nru |grep -v "^$" |  ./motif_set_jacard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jacard_1k.tab
+cut -f2 gene_mset_1k.tab| sort -nru |grep -v "^$" |  ./motif_set_jaccard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jaccard_1k.tab
 
 real	0m5.536s
 user	0m5.540s
 sys	0m0.032s
 
-head motif_set_jacard_1k.tab
+head motif_set_jaccard_1k.tab
 9223372062625103872	4899916411792523264	0.25
 9223372062625103872	4622945034709237760	0.2
 9223372062625103872	4620693243485487104	0.5
@@ -1251,24 +1250,24 @@ head motif_set_jacard_1k.tab
 9223372062625103872	4611967510583967744	0.25
 
 
-wc -l < motif_set_jacard_1k.tab
+wc -l < motif_set_jaccard_1k.tab
 99,345  (non-zero out of 5,612,925 possible  1.77% ) 
 
 
-cut -f2 gene_mset_2k.tab| sort -nru |grep -v "^$" |  ./motif_set_jacard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jacard_2k.tab
+cut -f2 gene_mset_2k.tab| sort -nru |grep -v "^$" |  ./motif_set_jaccard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jaccard_2k.tab
 
 
 time 
-cut -f2 gene_mset_5k.tab| sort -nru |grep -v "^$" |  ./motif_set_jacard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jacard_5k.tab
+cut -f2 gene_mset_5k.tab| sort -nru |grep -v "^$" |  ./motif_set_jaccard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jaccard_5k.tab
 
 25 seconds
 
 
 
-wc -l motif_set_jacard_?k.tab   
-   99345 motif_set_jacard_1k.tab
-  155315 motif_set_jacard_2k.tab
-  254021 motif_set_jacard_5k.tab
+wc -l motif_set_jaccard_?k.tab   
+   99345 motif_set_jaccard_1k.tab
+  155315 motif_set_jaccard_2k.tab
+  254021 motif_set_jaccard_5k.tab
   508681 total
 
 half a million hints, 
@@ -1276,27 +1275,27 @@ but they get multiplied as they are applied
   2X as they apply to each motif_set in the pair
   times the number of genes which have the motif_set 
 
-this amounts to jacard between the set motifs per gene
+this amounts to jaccard between the set motifs per gene
 
 choosing a cutoff
-cut -f3 motif_set_jacard_k.tab | sort -nr | uniq -c |otsu.awk 
+cut -f3 motif_set_jaccard_k.tab | sort -nr | uniq -c |otsu.awk 
 0.833333
 
 all buckets (1k,2k & 5k)  return 0.8333
 
-awk '$3 >= 0.833333 {count++}END{print count}' motif_set_jacard_?k.tab 
+awk '$3 >= 0.833333 {count++}END{print count}' motif_set_jaccard_?k.tab 
 
 a few precious hundred  with that threshold.  
 How about, better than 50/50
 
-awk '$3 >= 0.5 {count++}END{print count}' motif_set_jacard_?k.tab
+awk '$3 >= 0.5 {count++}END{print count}' motif_set_jaccard_?k.tab
 23153
 more like under ten thousand (per bucket)  
 so on average maybe one in four genes have a (weak) recommendation 
 
 dropping down to a third 
 
-awk '$3 >= 0.33333 {count++}END{print count}' motif_set_jacard_?k.tab
+awk '$3 >= 0.33333 {count++}END{print count}' motif_set_jaccard_?k.tab
 82,529
 
 I think looking at what quality of associations are being generated will
@@ -1306,10 +1305,10 @@ have to inform where to set the cutoff (if any).
 
 I really like the idea of the dimotifs.
 
-maybe what we want is a Jacard on the sets of edges (dimotifs)
+maybe what we want is a jaccard on the sets of edges (dimotifs)
 for each pairwise motif set.
 
-The jacard on edges is fundamentally different than the jacard over nodes 
+The jaccard on edges is fundamentally different than the jaccard over nodes 
 because it goes back to depending explicitly on each region 
 and and cannot rely on the motif sets because order matters.
 
@@ -1421,21 +1420,21 @@ we need to have at least half the dimotifs in common to be related
 
 time \
 cut -f1-3 refseq_m1_m2_dist_1k.tab| sort -u | \
-./dimotif_jacard.awk motif.list  -  > refseq_pair_dimotif_jacard_1k.tab 
+./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_1k.tab 
 
 real	42m32.958s
 user	42m32.844s
 sys	0m0.116s
 
 
-wc -l < refseq_pair_dimotif_jacard_1k.tab 
+wc -l < refseq_pair_dimotif_jaccard_1k.tab 
 169,668
 
 averages to each gene gets four recommendations 
 not that it is how it will work out
 
 
-cut -f3  refseq_pair_dimotif_jacard_1k.tab | sort -n |uniq -c | sort -nr
+cut -f3  refseq_pair_dimotif_jaccard_1k.tab | sort -n |uniq -c | sort -nr
  151349 1
   13599 0.666667
    2430 0.6
@@ -1462,13 +1461,13 @@ cut -f3  refseq_pair_dimotif_jacard_1k.tab | sort -n |uniq -c | sort -nr
       2 0.615385
       1 0.928571
 
-head of the dimotif jacard score distribution
+head of the dimotif jaccard score distribution
 
 the genes are not ordered pairwise in any particular way 
 
 but lets see who is in the "in" crowd 
 
-cut -f1  refseq_pair_dimotif_jacard_1k.tab | sort  |uniq -c | sort -nr |  head
+cut -f1  refseq_pair_dimotif_jaccard_1k.tab | sort  |uniq -c | sort -nr |  head
     209 NM_000142
     208 NM_000218
     207 NM_000874
@@ -1480,7 +1479,7 @@ cut -f1  refseq_pair_dimotif_jacard_1k.tab | sort  |uniq -c | sort -nr |  head
     201 NM_001002020
     200 NM_001003938
 
-cut -f2  refseq_pair_dimotif_jacard_1k.tab | sort  |uniq -c | sort -nr |  head
+cut -f2  refseq_pair_dimotif_jaccard_1k.tab | sort  |uniq -c | sort -nr |  head
     209 NM_207585
     208 NM_207584
     207 NM_207578
@@ -1494,7 +1493,7 @@ cut -f2  refseq_pair_dimotif_jacard_1k.tab | sort  |uniq -c | sort -nr |  head
 
 time \
 cut -f1-3 refseq_m1_m2_dist_2k.tab| sort -u | \
-./dimotif_jacard.awk motif.list  -  > refseq_pair_dimotif_jacard_2k.tab
+./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_2k.tab
 
 real	74m49.831s
 user	74m49.312s
@@ -1503,21 +1502,21 @@ sys	0m0.192s
 
 time \
 cut -f1-3 refseq_m1_m2_dist_5k.tab| sort -u | \
-./dimotif_jacard.awk motif.list  -  > refseq_pair_dimotif_jacard_5k.tab 
+./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_5k.tab 
 
 real	179m14.144s
 user	179m13.836s
 sys	0m0.120s
 
  
-wc -l refseq_pair_dimotif_jacard_1k.tab
-169,668 refseq_pair_dimotif_jacard_1k.tab
+wc -l refseq_pair_dimotif_jaccard_1k.tab
+169,668 refseq_pair_dimotif_jaccard_1k.tab
 
-wc -l refseq_pair_dimotif_jacard_2k.tab
-136,123 refseq_pair_dimotif_jacard_2k.tab
+wc -l refseq_pair_dimotif_jaccard_2k.tab
+136,123 refseq_pair_dimotif_jaccard_2k.tab
 
-wc -l refseq_pair_dimotif_jacard_5k.tab
-108,856 refseq_pair_dimotif_jacard_5k.tab
+wc -l refseq_pair_dimotif_jaccard_5k.tab
+108,856 refseq_pair_dimotif_jaccard_5k.tab
 
 there is an interesting outcome including more dimotifs means 
 fewer make the grade
@@ -1528,7 +1527,7 @@ fewer make the grade
 
 ############################################################
 [	belay this next part.... 
-	went with jacard over sets of graph parts nodes|edge 
+	went with jaccard over sets of graph parts nodes|edge 
 	without ever assembling a graph 
 ]
 
