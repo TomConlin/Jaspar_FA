@@ -1548,7 +1548,27 @@ clearly not a DAG. (so there can't be trees so I should not call it a forest)
 #######################################################
 Turn the data into RDF.
 
-Use the set_sig (digested)  as bnode identifier   
+Use the graphviz model as a tenplate
+
+awk  -F'"' '/.* -> .*/ { print "<" $2 ">\t<" $6 ">\t<" $4 ">" }' jaspar_target_model.gv 
+<NCBIGene_123>						<SO:adjacent_to>	<BNODE:gene_upstream_region>
+<BNODE:gene_upstream_region>		<rdfs:label>		<gene_upstream_region>
+<BNODE:gene_upstream_region>		<GENO:has_extent>	<1000 (region extent bp)>
+<BNODE:gene_upstream_region>		<rdf:type>			<SO:five_prime_flanking_region>
+<BNODE:gene_upstream_region>		<rdf:comment>		<Candidate SO:TF_binding_sites>
+<BNODE:motif_set>					<rdfs:label>		<motif_set_sig>
+<BNODE:motif_set>					<rdf:type>			<SIO:collection>
+<BNODE:motif_set>					<rdf:value>			<3>
+<BNODE:motif_set>					<RO:has member>		<JASPAR:motif>
+<JASPAR:motif>						<rdf:type>			<SO:nucleotide_motif>
+<JASPAR:motif>						<OIO:hasdbxref>		<http:JASPAR:motif>
+<JASPAR:motif>						<rdfs:label>		<motif>
+<BNODE:gene_upstream_region>		<RO:member of>		<BNODE:gene_jaccard_value>
+<BNODE:gene2_upstream_region>		<RO:member of>		<BNODE:gene_jaccard_value>
+<BNODE:gene_jaccard_value>			<rdfs:label>		<gene1_region gene2_region>
+<BNODE:gene_jaccard_value>			<SWO:Similarity score>	<0.73>
+<BNODE:gene_jaccard_value>			<rdf:type>			<SWO:Jaccard’s index>
+  
 
 
 
