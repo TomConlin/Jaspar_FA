@@ -195,7 +195,7 @@ cut -f2- gene_motifset_?k.tab | sort -u > motifset.tab
 wc -l < motifset.tab
 9876
 
-awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig=or(sig,(2^m[$i]))}else print "ERROR $i in $0"}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig=or(sig,(2^m[$i]))}else print "ERROR $i in $0 at " i}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
  
 wc -l < motifsetsig_motif.tab
 51260
@@ -204,9 +204,10 @@ grep "^0" motifsetsig_motif.tab | wc -l
 1470
 
 why are there sig--zero for motifsets with motifs in them? 
-it is not number word size
+it is not number > word size problem
 awk 'BEGIN{for(i=0;i<142;i++)print i "\t" 2^i}'
 0	1
 ...
 141	2787593149816327892691964784081045188247552
 
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}END{for  }' motif.list

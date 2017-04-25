@@ -5,9 +5,9 @@
 	ham = bit = 0
 	for(i=1; i<=NF; i++){
 
-		if($i == "1"){
+		if($i != "0"){
 			ham ++
-			bit += (2^i)
+			bit += (2^i) #  same as bit = or(bit,(2^i))
 		}
 	}
 	print ham "\t" bit
