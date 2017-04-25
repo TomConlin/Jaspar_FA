@@ -1,0 +1,212 @@
+
+restarting from a couple of hundred lines into README_FA_genes
+just after the creation of the bed intersection files.
+
+The main differences are I am switching from RefSeq to NCBIGene right away 
+instead of at the end and I know exactly where we are going.
+
+so from just after 
+... 
+bedtools intersect -wb -a data/upstream1000.bed -b MA_all.bed  > MA_up1k.bed
+bedtools intersect -wb -a data/upstream2000.bed -b MA_all.bed  > MA_up2k.bed
+bedtools intersect -wb -a data/upstream5000.bed -b MA_all.bed  > MA_up5k.bed
+
+
+keep the refseq but converted into an entrez gene id
+keep the motif name
+reduce the location extent to the average centroid location (stop + start) / 2 * sense
+
+The sense is strictly the genes sense not the motifs sense and will cause
+negative numbers to sort backwards as we are capturing the motif order w.r.t. the gene.
+
+This does beg the question is the motif different if it is used backwards? 
+
+
+awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up1k.bed | sort -u -k1,1 -k2n,2  > gene_order_motif_1k.tab
+
+awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up2k.bed | sort -u -k1,1 -k2n,2   > gene_order_motif_2k.tab
+
+awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up5k.bed | sort -u -k1,1 -k2n,2  > gene_order_motif_5k.tab
+
+
+wc -l gene_order_motif_?k.tab
+
+  28,575 gene_order_motif_1k.tab
+  35,503 gene_order_motif_2k.tab
+  51,567 gene_order_motif_5k.tab
+ 115645 total
+
+unique (inc location)
+cat gene_order_motif_?k.tab | sort -u | wc -l
+58,601
+
+-------------------------------
+What are the unique entrez_gene
+
+cut -f1 gene_order_motif_1k.tab | uniq | wc -l
+13,176
+
+cut -f1 gene_order_motif_2k.tab | uniq | wc -l
+14 552
+
+cut -f1 gene_order_motif_5k.tab | uniq | wc -l
+16,538
+
+note: collapsing into entrez genes from the start 
+results in fewer gene and upstream regions
+
+compare with unique refseq
+
+cut -f 4  MA_up1k.bed | sort -u | wc -l
+31,253
+
+cut -f 4  MA_up2k.bed | sort -u | wc -l
+34,937
+
+cut -f 4  MA_up5k.bed | sort -u | wc -l
+40,072
+
+that is a bit is a hit but probably for the best 
+---------------------------------- 
+
+collect up the set of motifs per entrez gene
+
+cut -f1,3 gene_order_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+1.96349  motif per gene in the first 1k
+
+cut -f1,3 gene_order_motif_2k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+2.18857 motif per gene in the first 2k
+
+cut -f1,3 gene_order_motif_5k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+2.71526 motif per gene in the first 5k
+
+pretty much half ...  I wonder if the refseq were for both nt and aa
+whatever the cause it is going to take a big bite 
+out of he number of motif sets greater than two 
+
+cut -f1,3 gene_order_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '$1>2{c++}END{print c}'
+3,174
+
+cut -f1,3 gene_order_motif_1k.tab | sort -u  > gene_motif_1k.tab
+cut -f1,3 gene_order_motif_2k.tab | sort -u  > gene_motif_2k.tab
+cut -f1,3 gene_order_motif_5k.tab | sort -u  > gene_motif_5k.tab
+
+awk 'g==$1{s=s "\t" $2}g!=$1{print s;g=$1;s=g "\t" $2}END{print s}' \
+	gene_motif_1k.tab > gene_motifset_1k.tab
+
+awk 'g==$1{s=s "\t" $2}g!=$1{print s;g=$1;s=g "\t" $2}END{print s}' \
+	gene_motif_2k.tab > gene_motifset_2k.tab
+
+awk 'g==$1{s=s "\t" $2}g!=$1{print s;g=$1;s=g "\t" $2}END{print s}' \
+	gene_motif_5k.tab > gene_motifset_5k.tab
+
+how many motif_sets?
+ 
+cut -f2- gene_motifset_1k.tab | sort -u | wc -l
+3,598
+
+cut -f2- gene_motifset_2k.tab | sort -u | wc -l
+4,528
+
+cut -f2- gene_motifset_5k.tab | sort -u | wc -l
+6,175
+
+how many motif_sets all together  
+cut -f2- gene_motifset_?k.tab | sort -u | wc -l
+9,876
+
+reduce the motif_set to a binary signature,  
+here based on the index into a sorted list  
+
+Jaspar has 141 motifs in the assembly 
+but within only 130 the upstream regions we find:
+cut -f4 MA_all.bed  | sort -u | wc -l
+141
+ 
+cut -f2 gene_motif_?k.tab | sort -u | wc -l
+130
+
+can provide a tiny bit of future proofing by indexing into the full set
+cut -f4 MA_all.bed  | sort -u > motif.list
+
+# make a bit vector signature for the motif set 
+# keep larger sig (superset) before smaller sig (subset)
+
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	motif.list gene_motifset_1k.tab | sort -k2nr,2 > gene_motifsetsig_1k.tab
+
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	motif.list gene_motifset_2k.tab | sort -k2nr,2 > gene_motifsetsig_2k.tab
+
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	motif.list gene_motifset_5k.tab | sort -k2nr,2 > gene_motifsetsig_5k.tab
+
+wc -l gene_motifset_?k.tab
+  13177 gene_motifset_1k.tab
+  14553 gene_motifset_2k.tab
+  16539 gene_motifset_5k.tab
+  44269 total
+
+wc -l gene_motifsetsig_?k.tab
+
+  13177 gene_motifset_1k.tab
+  14553 gene_motifset_2k.tab
+  16539 gene_motifset_5k.tab
+  44269 total
+
+none were lost comverting to sigs
+
+cut -f2  gene_motifsetsig_1k.tab | sort -u | wc -l
+1395
+
+cut -f2  gene_motifsetsig_2k.tab | sort -u | wc -l
+1978
+
+cut -f2  gene_motifsetsig_5k.tab | sort -u | wc -l
+3100
+
+all together
+cut -f2  gene_motifsetsig_?k.tab | sort -u | wc -l
+4001
+
+above we see the drop in unique motif sets reported due to order not mattering
+
+report subsets (across all three region extents)
+
+cut -f2 gene_motifsetsig_?k.tab |sort -unr|\
+awk '{a[++i]=$1}END{for(i=1;i<NR;i++){for(j=i+1;j<NR;j++){\
+ if(a[j]==and(a[i],a[j]))print a[i] "\t" a[j]}}}' > motifsetsig_subset.tab
+
+wc -l < motifsetsig_subset.tab 
+69291
+
+isolate the motifset_size
+
+cut -f2,3 gene_motifsetsig_?k.tab |sort -unr > motifsetsig_count.tab
+
+
+Also want motifs associated with each motifset it is an element of. 
+this is for xref linking in lieu of creating proper Jaspar motifs
+
+cut -f2- gene_motifset_?k.tab | sort -u > motifset.tab 
+wc -l < motifset.tab
+9876
+
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig=or(sig,(2^m[$i]))}else print "ERROR $i in $0"}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
+ 
+wc -l < motifsetsig_motif.tab
+51260
+
+grep "^0" motifsetsig_motif.tab | wc -l
+1470
+
+why are there sig--zero for motifsets with motifs in them? 
+it is not number word size
+awk 'BEGIN{for(i=0;i<142;i++)print i "\t" 2^i}'
+0	1
+...
+141	2787593149816327892691964784081045188247552
+

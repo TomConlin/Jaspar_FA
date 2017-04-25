@@ -20,13 +20,16 @@ digraph{
 	label=motif_set	
 	"BNODE:motif_set" -> "motif_set_sig"[label="rdfs:label"]
 	"BNODE:motif_set" -> "SIO:collection"[label="rdf:type"]
-	"BNODE:motif_set" -> "3 (flavors)"  [label="rdf:value"]
+	//"BNODE:motif_set" -> "3 (flavors)"  [label="rdf:value"]
+	"BNODE:motif_set" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
  }
 
- "BNODE:motif_set" -> "JASPAR:motif" [label="RO:has member"]
- "JASPAR:motif" -> "SO:nucleotide_motif" [label="rdf:type"]
- "JASPAR:motif" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
- "JASPAR:motif" -> "motif"[label="rdfs:label"]
+"BNODE:motif_set" -> "BNODE:motif_set" [label="OIO:subset"]  // prolly not 
+
+// "BNODE:motif_set" -> "JASPAR:motif" [label="RO:has member"]
+// "JASPAR:motif" -> "SO:nucleotide_motif" [label="rdf:type"]
+// "JASPAR:motif" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
+// "JASPAR:motif" -> "motif"[label="rdfs:label"]
 
  "BNODE:gene_upstream_region" -> "BNODE:gene_jaccard_value" [label="RO:member of"]
  "BNODE:gene2_upstream_region" -> "BNODE:gene_jaccard_value" [label="RO:member of"]
