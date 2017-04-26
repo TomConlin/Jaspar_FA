@@ -133,15 +133,15 @@ cut -f4 MA_all.bed  | sort -u > motif.list
 # keep larger sig (superset) before smaller sig (subset)
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" ms "\t" NF-1}' \
 	motif.list gene_motifset_1k.tab | sort -k2nr,2 > gene_motifsetsig_1k.tab
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" ms "\t" NF-1}' \
 	motif.list gene_motifset_2k.tab | sort -k2nr,2 > gene_motifsetsig_2k.tab
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms=or(ms,(2^m[$i]))}print $1 "\t" ms "\t" NF-1}' \
+	FNR!=NR{ms=0;for(i=2;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" ms "\t" NF-1}' \
 	motif.list gene_motifset_5k.tab | sort -k2nr,2 > gene_motifsetsig_5k.tab
 
 wc -l gene_motifset_?k.tab
@@ -160,17 +160,17 @@ wc -l gene_motifsetsig_?k.tab
 none were lost comverting to sigs
 
 cut -f2  gene_motifsetsig_1k.tab | sort -u | wc -l
-1395
+2198
 
 cut -f2  gene_motifsetsig_2k.tab | sort -u | wc -l
-1978
+4408
 
 cut -f2  gene_motifsetsig_5k.tab | sort -u | wc -l
 3100
 
 all together
 cut -f2  gene_motifsetsig_?k.tab | sort -u | wc -l
-4001
+6025
 
 above we see the drop in unique motif sets reported due to order not mattering
 
@@ -181,7 +181,7 @@ awk '{a[++i]=$1}END{for(i=1;i<NR;i++){for(j=i+1;j<NR;j++){\
  if(a[j]==and(a[i],a[j]))print a[i] "\t" a[j]}}}' > motifsetsig_subset.tab
 
 wc -l < motifsetsig_subset.tab 
-69291
+7679   (I don't really trust this  awks or() was not reliable) 
 
 isolate the motifset_size
 
@@ -195,19 +195,94 @@ cut -f2- gene_motifset_?k.tab | sort -u > motifset.tab
 wc -l < motifset.tab
 9876
 
-awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig=or(sig,(2^m[$i]))}else print "ERROR $i in $0 at " i}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
+awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig+=2^m[$i]}else print "ERROR $i in $0 at " i}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
  
 wc -l < motifsetsig_motif.tab
 51260
 
+sanity check
 grep "^0" motifsetsig_motif.tab | wc -l
-1470
+0
 
-why are there sig--zero for motifsets with motifs in them? 
-it is not number > word size problem
-awk 'BEGIN{for(i=0;i<142;i++)print i "\t" 2^i}'
-0	1
-...
-141	2787593149816327892691964784081045188247552
+################################################################################
 
-awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}END{for  }' motif.list
+                DiMotifs
+
+get these from 
+
+gene_order_motif_5k.tab
+gene_order_motif_2k.tab
+gene_order_motif_1k.tab
+
+head  gene_order_motif_1k.tab
+1	    -58865426	MA0058.2
+100	    -43280924	MA0154.2
+100	    -43280470	MA0144.2
+100	    -43280469	MA0473.1
+1000	-25758363	MA0144.2
+1000	-25617469	MA0035.3
+
+
+by default, the first couple of dimotifs are:
+
+NCBIGene:100  MA0154.2  ->  MA0144.2 
+NCBIGene:100  MA0144.2  ->  MA0473.1
+
+but if we consider the distance between them
+
+NCBIGene:100  MA0154.2  --(454)-->  MA0144.2 
+NCBIGene:100  MA0144.2  ---(1)--->  MA0473.1
+
+we would be better served with 
+
+NCBIGene:100  MA0154.2  ->  MA0144.2 
+NCBIGene:100  MA0154.2  ->  MA0473.1
+
+and somehow indicate they are alternatives?
+
+
+also note that although we pulled the 1k region 
+collapsing refseq into ncbigene allows 
+NCBIGene:1000 to have 140,894 bases 
+between  MA0144.2 and	MA0035.3
+in its upstream 1k region.
+
+
+what is the length of a jaspar motif? 
+cut -f 2,3 MA_all.bed| awk '{a+=$1;b+=$2}END{print (b-a)/NR}' 
+13.0237
+if less then 14 bp apart then consider overlaping
+
+
+awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_1k.tab > gene_m1_m2_dx_1k.tab 
+
+awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_2k.tab > gene_m1_m2_dx_2k.tab 
+
+awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_5k.tab > gene_m1_m2_dx_5k.tab 
+
+wc -l gene_m1_m2_dx_?k.tab
+  15399 gene_m1_m2_dx_1k.tab
+  20951 gene_m1_m2_dx_2k.tab
+  35029 gene_m1_m2_dx_5k.tab
+  71379 total
+
+if we were to filter the impossible
+awk '$4<=1000' gene_m1_m2_dx_1k.tab | wc -l
+14740   (looses 650)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+awk 'g==$1{if(($2-x)<14){m1=b} print g,m1,$3 }g!=$1{g=$1;x=$2;b=m1=$3}' gene_order_motif_5k.tab
+
