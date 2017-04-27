@@ -200,7 +200,7 @@ cut -f4 MA_up5k.bed | sort -u | wc -l
 Update: leaving the rest for reference but forking from this point to  
 
 	'README.FA_genes_take2'
-
+    https://github.com/TomConlin/Jaspar_FA/blob/master/README.FA_genes_take2
 which gets to a better place quicker (hindsight being 20/20 and all)  
 
 
