@@ -166,6 +166,25 @@ awk 'BEGIN{s["f"]="+";s["r"]="-";s[""]="."}{split(substr($1,2),b,"_");split($2,a
 print a[1] "\t" c[1] "\t" c[2] "\t" b[1] "_" b[2] "\t.\t" s[b[7]]}' dataupstream5000.defline | | awk '/^chr[0-9XY]*\t/&&NF==6' > data/upstream5000.bed
 
 
+
+
+######################################################################
+######################################################################
+######################################################################
+
+Update: leaving the rest for reference but forking from this point to  
+
+	'README.FA_genes_take2'
+    https://github.com/TomConlin/Jaspar_FA/blob/master/README.FA_genes_take2
+which gets to a better place quicker (hindsight being 20/20 and all)  
+
+
+######################################################################
+######################################################################
+######################################################################
+
+
+
 bedtools intersect -wb -a data/upstream1000.bed -b MA_all.bed  > MA_up1k.bed
 bedtools intersect -wb -a data/upstream2000.bed -b MA_all.bed  > MA_up2k.bed
 bedtools intersect -wb -a data/upstream5000.bed -b MA_all.bed  > MA_up5k.bed
@@ -191,22 +210,6 @@ cut -f4 MA_up5k.bed | sort -u | wc -l
 40072
 
 
-
-
-######################################################################
-######################################################################
-######################################################################
-
-Update: leaving the rest for reference but forking from this point to  
-
-	'README.FA_genes_take2'
-    https://github.com/TomConlin/Jaspar_FA/blob/master/README.FA_genes_take2
-which gets to a better place quicker (hindsight being 20/20 and all)  
-
-
-######################################################################
-######################################################################
-######################################################################
 
 how to  represent ...
 1k part_of 2k part_of 5k
