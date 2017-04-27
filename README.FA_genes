@@ -523,7 +523,7 @@ cut -f1,2 refseq_motif_5k_count.tab | sort -u | wc -l
 
 within each bucket, adding the count does not change gene+motif uniqueness
 
-177,269 / 40,072 = 4.42pose is to indemnify legal entities and monarch isn't one yet. I s3762228 motifs per gene in the 5K bucket
+177,269 / 40,072 = 4.423762228 motifs per gene in the 5K bucket
 
 131 choose 5 is about 40 billion
 131 choose 4.4  about 2.3 billion
@@ -621,7 +621,7 @@ curl -s "http://mygene.info/v3/query?species=human&q=alias:${foo}" | jq .
 
 good enough.
 
-for foo in $(cat FA_alipose is to indemnify legal entities and monarch isn't one yet. I sas); do 
+for foo in $(cat FA_alias); do 
 	echo ${foo};
 	curl -s "http://mygene.info/v3/query?species=human&fields=symbol,entrezgene&q=alias:${foo}" |\
 	jq '[.hits[].entrezgene, .hits[].symbol]'; 
