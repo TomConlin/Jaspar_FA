@@ -1,20 +1,53 @@
 
-restarting from a couple of hundred lines into README_FA_genes
-just after the creation of the bed intersection files.
+Restarting from a couple of hundred lines into README_FA_genes
+just before the creation of the bed intersection files.
 
 The main differences are I am switching from RefSeq to NCBIGene right away 
 instead of at the end and I know exactly where we are going.
 
-so from just after 
-... 
-bedtools intersect -wb -a data/upstream1000.bed -b MA_all.bed  > MA_up1k.bed
-bedtools intersect -wb -a data/upstream2000.bed -b MA_all.bed  > MA_up2k.bed
-bedtools intersect -wb -a data/upstream5000.bed -b MA_all.bed  > MA_up5k.bed
+
+convert from refseq to nchi and collapse then merge overlapping regions
+
+awk 'BEGIN{OFS="\t"}FNR==NR{g[$1]=$2}FNR!=NR{if($4 in g)$4=g[$4];print}' data/refseq_entrez.tab data/upstream1000.bed | sort -k4,4 -k2n,2 -u | \
+awk 'BEGIN{OFS="\t"}$4==g && b>=$2 {$2=a;r=$0}$4==g && b<$2 {print r;r=$0;a=$2;b=$3} $4!=g {print r;r=$0;g=$4;a=$2;b=$3}'|sort -k1,1 -k2n,2 -u > data/upstream_gene1000.bed
+
+upstream regions
+wc -l < data/upstream_gene1000.bed
+21977
+
+genes with the most upstream regions
+
+cut -f4  data/upstream_gene1000.bed | sort | uniq -c| sort -nr | head
+     10 6925
+      9 10801
+      9 100507170
+      8 5144
+      8 1588
+      7 84894
+      7 83641
+      7 5998
+      7 5339
+      7 29
 
 
-keep the refseq but converted into an entrez gene id
+awk 'BEGIN{OFS="\t"}FNR==NR{g[$1]=$2}FNR!=NR{if($4 in g)$4=g[$4];print}' data/refseq_entrez.tab data/upstream2000.bed | sort -k4,4 -k2n,2 -u | awk 'BEGIN{OFS="\t"}$4==g && b>=$2 {$2=a;r=$0}$4==g && b<$2 {print r;r=$0;a=$2;b=$3} $4!=g {print r;r=$0;g=$4;a=$2;b=$3}'|sort -k1,1 -k2n,2 -u > data/upstream_gene2000.bed
+
+awk 'BEGIN{OFS="\t"}FNR==NR{g[$1]=$2}FNR!=NR{if($4 in g)$4=g[$4];print}' data/refseq_entrez.tab data/upstream5000.bed | sort -k4,4 -k2n,2 -u | awk 'BEGIN{OFS="\t"}$4==g && b>=$2 {$2=a;r=$0}$4==g && b<$2 {print r;r=$0;a=$2;b=$3} $4!=g {print r;r=$0;g=$4;a=$2;b=$3}'|sort -k1,1 -k2n,2 -u > data/upstream_gene5000.bed
+
+
+
+bedtools intersect -wb -a data/upstream_gene1000.bed -b MA_all.bed  > MA_up1k.bed
+bedtools intersect -wb -a data/upstream_gene2000.bed -b MA_all.bed  > MA_up2k.bed
+bedtools intersect -wb -a data/upstream_gene5000.bed -b MA_all.bed  > MA_up5k.bed
+
+
+keep  ncbigene id
+reduce the region extent to a  signed centroid
 keep the motif name
-reduce the location extent to the average centroid location (stop + start) / 2 * sense
+reduce the motif location extent to signed centroid
+
+signed centroid is just (stop + start) / 2 * sense
+
 
 The sense is strictly the genes sense not the motifs sense and will cause
 negative numbers to sort backwards as we are capturing the motif order w.r.t. the gene.
@@ -22,35 +55,37 @@ negative numbers to sort backwards as we are capturing the motif order w.r.t. th
 This does beg the question is the motif different if it is used backwards? 
 
 
-awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up1k.bed | sort -u -k1,1 -k2n,2  > gene_order_motif_1k.tab
+awk '{print $4 "\t" $6 int(($2+$3)/2) "\t" $6 int(($8+$9)/2) "\t" $10}' MA_up1k.bed | sort -u -k1,1 -k2n,2 -k3n,3 > gene_rc_mc_motif_1k.tab
 
-awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up2k.bed | sort -u -k1,1 -k2n,2   > gene_order_motif_2k.tab
+awk '{print $4 "\t" $6 int(($2+$3)/2) "\t" $6 int(($8+$9)/2) "\t" $10}' MA_up2k.bed | sort -u -k1,1 -k2n,2 -k3n,3 > gene_rc_mc_motif_2k.tab
 
-awk 'FNR==NR{gene[$1]=$2}FNR!=NR{print gene[$4] "\t" $6 int(($8+$9)/2) "\t" $10}' data/refseq_entrez.tab  MA_up5k.bed | sort -u -k1,1 -k2n,2  > gene_order_motif_5k.tab
+awk '{print $4 "\t" $6 int(($2+$3)/2) "\t" $6 int(($8+$9)/2) "\t" $10}' MA_up5k.bed | sort -u -k1,1 -k2n,2 -k3n,3 > gene_rc_mc_motif_5k.tab
 
 
-wc -l gene_order_motif_?k.tab
+wc -l gene_rc_mc_motif_?k.tab
 
-  28,575 gene_order_motif_1k.tab
-  35,503 gene_order_motif_2k.tab
-  51,567 gene_order_motif_5k.tab
- 115645 total
+  28471 gene_rc_mc_motif_1k.tab
+  35356 gene_rc_mc_motif_2k.tab
+  51317 gene_rc_mc_motif_5k.tab
+ 115144 total
 
-unique (inc location)
-cat gene_order_motif_?k.tab | sort -u | wc -l
-58,601
+
+unique motif_locations
+cat gene_rc_mc_motif_?k.tab | sort -u | wc -l
+58,487
+
 
 -------------------------------
 What are the unique entrez_gene
 
-cut -f1 gene_order_motif_1k.tab | uniq | wc -l
-13,176
+cut -f1 gene_rc_mc_motif_1k.tab | uniq | wc -l
+13116
 
-cut -f1 gene_order_motif_2k.tab | uniq | wc -l
-14 552
+cut -f1 gene_rc_mc_motif_2k.tab | uniq | wc -l
+14,478
 
-cut -f1 gene_order_motif_5k.tab | uniq | wc -l
-16,538
+cut -f1 gene_rc_mc_motif_5k.tab | uniq | wc -l
+16,444
 
 note: collapsing into entrez genes from the start 
 results in fewer gene and upstream regions
@@ -71,25 +106,26 @@ that is a bit is a hit but probably for the best
 
 collect up the set of motifs per entrez gene
 
-cut -f1,3 gene_order_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
-1.96349  motif per gene in the first 1k
+cut -f1,4 gene_rc_mc_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+1.96569  motif per upstream "1k" region
 
-cut -f1,3 gene_order_motif_2k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
-2.18857 motif per gene in the first 2k
+cut -f1,4 gene_rc_mc_motif_2k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+2.19119 motif per upstream "2k" region
 
-cut -f1,3 gene_order_motif_5k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
-2.71526 motif per gene in the first 5k
+cut -f1,4 gene_rc_mc_motif_5k.tab | sort -u | cut -f1 | uniq -c | awk '{c+=$1}END{print c/NR}'
+2.71777 motif per upstream "5k" region
 
 pretty much half ...  I wonder if the refseq were for both nt and aa
 whatever the cause it is going to take a big bite 
-out of he number of motif sets greater than two 
+out of the number of motif sets greater than two 
 
-cut -f1,3 gene_order_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '$1>2{c++}END{print c}'
-3,174
+cut -f1,4 gene_rc_mc_motif_1k.tab | sort -u | cut -f1 | uniq -c | awk '$1>2{c++}END{print c}'
+3164
 
-cut -f1,3 gene_order_motif_1k.tab | sort -u  > gene_motif_1k.tab
-cut -f1,3 gene_order_motif_2k.tab | sort -u  > gene_motif_2k.tab
-cut -f1,3 gene_order_motif_5k.tab | sort -u  > gene_motif_5k.tab
+
+cut -f1,4 gene_rc_mc_motif_1k.tab | sort -u  > gene_motif_1k.tab
+cut -f1,4 gene_rc_mc_motif_2k.tab | sort -u  > gene_motif_2k.tab
+cut -f1,4 gene_rc_mc_motif_5k.tab | sort -u  > gene_motif_5k.tab
 
 awk 'g==$1{s=s "\t" $2}g!=$1{print s;g=$1;s=g "\t" $2}END{print s}' \
 	gene_motif_1k.tab > gene_motifset_1k.tab
@@ -103,17 +139,17 @@ awk 'g==$1{s=s "\t" $2}g!=$1{print s;g=$1;s=g "\t" $2}END{print s}' \
 how many motif_sets?
  
 cut -f2- gene_motifset_1k.tab | sort -u | wc -l
-3,598
+3,597
 
 cut -f2- gene_motifset_2k.tab | sort -u | wc -l
 4,528
 
 cut -f2- gene_motifset_5k.tab | sort -u | wc -l
-6,175
+6,173
 
 how many motif_sets all together  
 cut -f2- gene_motifset_?k.tab | sort -u | wc -l
-9,876
+9,871
 
 reduce the motif_set to a binary signature,  
 here based on the index into a sorted list  
@@ -145,32 +181,31 @@ awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
 	motif.list gene_motifset_5k.tab | sort -k2nr,2 > gene_motifsetsig_5k.tab
 
 wc -l gene_motifset_?k.tab
-  13177 gene_motifset_1k.tab
-  14553 gene_motifset_2k.tab
-  16539 gene_motifset_5k.tab
-  44269 total
+  13117 gene_motifset_1k.tab
+  14479 gene_motifset_2k.tab
+  16445 gene_motifset_5k.tab
+  44041 total
 
 wc -l gene_motifsetsig_?k.tab
-
-  13177 gene_motifset_1k.tab
-  14553 gene_motifset_2k.tab
-  16539 gene_motifset_5k.tab
-  44269 total
+  13117 gene_motifsetsig_1k.tab
+  14479 gene_motifsetsig_2k.tab
+  16445 gene_motifsetsig_5k.tab
+  44041 tota
 
 none were lost comverting to sigs
 
 cut -f2  gene_motifsetsig_1k.tab | sort -u | wc -l
-2198
+2199
 
 cut -f2  gene_motifsetsig_2k.tab | sort -u | wc -l
-4408
+2940
 
 cut -f2  gene_motifsetsig_5k.tab | sort -u | wc -l
-3100
+4408
 
 all together
 cut -f2  gene_motifsetsig_?k.tab | sort -u | wc -l
-6025
+6022
 
 above we see the drop in unique motif sets reported due to order not mattering
 
@@ -181,7 +216,7 @@ awk '{a[++i]=$1}END{for(i=1;i<NR;i++){for(j=i+1;j<NR;j++){\
  if(a[j]==and(a[i],a[j]))print a[i] "\t" a[j]}}}' > motifsetsig_subset.tab
 
 wc -l < motifsetsig_subset.tab 
-7679   (I don't really trust this  awks or() was not reliable) 
+9789   (I don't really trust this  awks or() was not reliable) 
 
 isolate the motifset_size
 
@@ -193,12 +228,12 @@ this is for xref linking in lieu of creating proper Jaspar motifs
 
 cut -f2- gene_motifset_?k.tab | sort -u > motifset.tab 
 wc -l < motifset.tab
-9876
+9871
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}FNR!=NR{sig=0;for(i=1;i<=NF;i++){if($i in m){sig+=2^m[$i]}else print "ERROR $i in $0 at " i}for(i=1;i<=NF;i++)print sig "\t" $i}' motif.list  motifset.tab > motifsetsig_motif.tab
  
 wc -l < motifsetsig_motif.tab
-51260
+51239
 
 sanity check
 grep "^0" motifsetsig_motif.tab | wc -l
@@ -210,11 +245,11 @@ grep "^0" motifsetsig_motif.tab | wc -l
 
 get these from 
 
-gene_order_motif_5k.tab
-gene_order_motif_2k.tab
-gene_order_motif_1k.tab
+gene_rc_mc_motif_5k.tab
+gene_rc_mc_motif_2k.tab
+gene_rc_mc_motif_1k.tab
 
-head  gene_order_motif_1k.tab
+head  gene_rc_mc_motif_1k.tab
 1	    -58865426	MA0058.2
 100	    -43280924	MA0154.2
 100	    -43280470	MA0144.2
@@ -254,17 +289,17 @@ cut -f 2,3 MA_all.bed| awk '{a+=$1;b+=$2}END{print (b-a)/NR}'
 if less then 14 bp apart then consider overlaping
 
 
-awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_1k.tab > gene_m1_m2_dx_1k.tab 
+awk 'g==$1{print g "\t" m "\t" $4 "\t" $3 - x;x=$3;m=$4}g!=$1{g=$1;x=$3;m=$4}' gene_rc_mc_motif_1k.tab > gene_m1_m2_dx_1k.tab 
 
-awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_2k.tab > gene_m1_m2_dx_2k.tab 
+awk 'g==$1{print g "\t" m "\t" $4 "\t" $3 - x;x=$3;m=$4}g!=$1{g=$1;x=$3;m=$4}' gene_rc_mc_motif_2k.tab > gene_m1_m2_dx_2k.tab 
 
-awk 'g==$1{print g "\t" m "\t" $3 "\t" $2 - x;x=$2;m=$3}g!=$1{g=$1;x=$2;m=$3}' gene_order_motif_5k.tab > gene_m1_m2_dx_5k.tab 
+awk 'g==$1{print g "\t" m "\t" $4 "\t" $3 - x;x=$3;m=$4}g!=$1{g=$1;x=$3;m=$4}' gene_rc_mc_motif_5k.tab > gene_m1_m2_dx_5k.tab 
 
 wc -l gene_m1_m2_dx_?k.tab
-  15399 gene_m1_m2_dx_1k.tab
-  20951 gene_m1_m2_dx_2k.tab
-  35029 gene_m1_m2_dx_5k.tab
-  71379 total
+  15355 gene_m1_m2_dx_1k.tab
+  20878 gene_m1_m2_dx_2k.tab
+  34873 gene_m1_m2_dx_5k.tab
+  71106 total
 
 if we were to filter the impossible
 awk '$4<=1000' gene_m1_m2_dx_1k.tab | wc -l
