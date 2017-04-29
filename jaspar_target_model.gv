@@ -4,17 +4,17 @@ digraph{
  compound=true;
  title=JASPAR_target_model
  
- "NCBIGene_123" -> "BNODE:gene_upstream_region" [label="SO:adjacent_to"]
+ "NCBIGene_123" -> "BNODE:gene1_upstream_region" [label="SO:adjacent_to"]
 
  subgraph  cluster_0 { // the genomic region
-	label=gene_upstream_region
-	"BNODE:gene_upstream_region" -> "gene_upstream_region" [label="rdfs:label"]
-	"BNODE:gene_upstream_region" -> "1000 (region extent bp)" [label="GENO:has_extent"]
-	"BNODE:gene_upstream_region" -> "SO:five_prime_flanking_region" [label="rdf:type"]	
-	"BNODE:gene_upstream_region" -> "Candidate SO:TF_binding_sites" [label="rdf:comment"]
+	label=gene1_upstream_region
+	"BNODE:gene1_upstream_region" -> "gene1_upstream_region" [label="rdfs:label"]
+	"BNODE:gene1_upstream_region" -> "1000 (region extent bp)" [label="GENO:has_extent"]
+	"BNODE:gene1_upstream_region" -> "SO:five_prime_flanking_region" [label="rdf:type"]	
+	"BNODE:gene1_upstream_region" -> "Candidate SO:TF_binding_sites" [label="rdf:comment"]
  }
 
- "BNODE:gene_upstream_region"-> "BNODE:motif_set" [label="SO:overlaps"]
+ "BNODE:gene1_upstream_region"-> "BNODE:motif_set" [label="SO:overlaps"]
 
  subgraph cluster_1 { // set of motifs
 	label=motif_set	
@@ -32,14 +32,14 @@ digraph{
 // "JASPAR:motif" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
 // "JASPAR:motif" -> "motif"[label="rdfs:label"]
 
- "BNODE:gene_upstream_region" -> "BNODE:gene_jaccard_value" [label="RO:member of"]
- "BNODE:gene2_upstream_region" -> "BNODE:gene_jaccard_value" [label="RO:member of"]
+ "BNODE:gene1_upstream_region" -> "BNODE:pairwise similarity" [label="RO:member of"]
+ "BNODE:gene2_upstream_region" -> "BNODE:pairwise similarity" [label="RO:member of"]
 
- subgraph cluster_2 { // pairwise (dis)similarity
+ subgraph cluster_2 { // pairwise similarity
 	label="pairwise similarity"	
-	"BNODE:gene_jaccard_value" -> "gene1_region gene2_region" [label="rdfs:label"]
-	"BNODE:gene_jaccard_value" -> "0.73" [label="SWO:Similarity score"]
-	"BNODE:gene_jaccard_value" -> "SWO:Jaccard’s index" [label="rdf:type"]
+	"BNODE:pairwise similarity" -> "gene1_region gene2_region" [label="rdfs:label"]
+	"BNODE:pairwise similarity" -> "0.73" [label="SWO:Similarity score"]
+	"BNODE:pairwise similarity" -> "SWO:Jaccard’s index" [label="rdf:type"]
 	//  Term IRI: http://www.ebi.ac.uk/efo/swo/SWO_0000243
  }
 }

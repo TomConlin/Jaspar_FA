@@ -2,37 +2,37 @@ from Fanconi gene sets spreadsheet
 
 https://docs.google.com/spreadsheets/d/1yX-5sfrC3vrahf4_k7-5rl4Oqzm853ollIMmUo1PTc0
 
-gene set 5 with GH issue 
+gene set 5 with GH issue
 https://github.com/NCATS-Tangerine/ncats-ingest/issues/21
 
-FANCA, 
-FANCB, 
-FANCC, 
-FANCE, 
-FANCF, 
-FANCG, 
-FANCL, 
-FANCM, 
-FANCD2, 
-FANCI, 
+FANCA,
+FANCB,
+FANCC,
+FANCE,
+FANCF,
+FANCG,
+FANCL,
+FANCM,
+FANCD2,
+FANCI,
 UBE2T
-FANCD1 (BRCA2), 
-FANCJ, 
-FANCN, 
-FANCO, 
-FANCP, 
-FANCQ, 
-FANCR, 
-FANCS, 
-FANCV, 
+FANCD1 (BRCA2),
+FANCJ,
+FANCN,
+FANCO,
+FANCP,
+FANCQ,
+FANCR,
+FANCS,
+FANCV,
 FANCU
-FAAP100, 
-FAAP24, 
-FAAP20, 
-FAAP16 (MHF1), 
+FAAP100,
+FAAP24,
+FAAP20,
+FAAP16 (MHF1),
 FAAP10 (MHF2)
 
- 
+
 Jaspar provides bed files for transcription factors
 which locates them on hg19
 
@@ -46,8 +46,8 @@ http://jaspar.genereg.net/html/DOWNLOAD/JASPAR_CORE/
 we would be interested in the vertebrate set
 
 wget http://jaspar.genereg.net/html/DOWNLOAD/bed_files/MA*.bed
-    no joy 
-it is not liking wget, resetting by peer.  
+    no joy
+it is not liking wget, resetting by peer.
 curl gets through with the names here.
 
 curl -s http://jaspar.genereg.net/html/DOWNLOAD/bed_files/ | sed 's|.*<a href="MA.*bed">\(MA[0-9]*\.[0-9]\.bed\)</a>.*|\1|g' | grep "^MA" > jaspar_tx_bed.list
@@ -79,13 +79,13 @@ looks like 1.1M instances of 141 motifs total
 ----------------------------------------------------------
 where: chr.  bp  & strand are these FA-5 genes locations on hg_19?
 
-get all genes from ucsd table browser? 
+get all genes from ucsd table browser?
 
 genome.ucsc.edu/cgi-bin/hgTables?hgsid=586694461_3slK1ieAYc4t0GvHwBU8LvW8sCYj&clade=mammal&org=Human&db=hg19&hgta_group=genes&hgta_track=geneid&hgta_table=0&hgta_regionType=genome&hgta_outputType=bed&hgta_outFileName=hg19_geneid.bed.gz
 
 
 looks like they offer some kind of fasta file for 1k,2k & 5k upstream regions
-8M,16M & 40M respectively 
+8M,16M & 40M respectively
 
 http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/
 
@@ -102,8 +102,8 @@ zcat upstream1000.fa.gz | grep "^>" | head
 >NM_018090_up_1000_chr1_16766167_f chr1:16766167-16767166
 
 
-but strand may not matter in this case. 
-i.e transcription factor may need not be on the same strand 
+but strand may not matter in this case.
+i.e transcription factor may need not be on the same strand
 as the gene it is regulating.
 (update: decided it may matter wrt the sense of the gene and ordering of motifs)
 
@@ -132,7 +132,7 @@ about 2,045 or the upstream1000.bed are not parsing
 not all files have 6 columns
 
 chr1_gl000191_random
-or 
+or
 chr4_ctg9_hap1
 
 
@@ -172,11 +172,11 @@ print a[1] "\t" c[1] "\t" c[2] "\t" b[1] "_" b[2] "\t.\t" s[b[7]]}' dataupstream
 ######################################################################
 ######################################################################
 
-Update: leaving the rest for reference but forking from this point to  
+Update: leaving the rest for reference but forking from this point to
 
 	'README.FA_genes_take2'
     https://github.com/TomConlin/Jaspar_FA/blob/master/README.FA_genes_take2
-which gets to a better place quicker (hindsight being 20/20 and all)  
+which gets to a better place quicker (hindsight being 20/20 and all)
 
 
 ######################################################################
@@ -192,7 +192,7 @@ bedtools intersect -wb -a data/upstream5000.bed -b MA_all.bed  > MA_up5k.bed
 
 
 # some counts
-# transcription_factor v.s gene pairs 
+# transcription_factor v.s gene pairs
 
 wc -l < MA_up1k.bed
 103832
@@ -220,30 +220,30 @@ gene1 <up1k> <tx_1> .
 gene1 <up1k> <tx_2> .
 gene1 <up5k> <tx_1> .
 
-To get at how many tx_n within 1,2,5 kbp of gene_123? 
+To get at how many tx_n within 1,2,5 kbp of gene_123?
 
 uniq -c refseq_motif_1k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_1k_count.tab
 uniq -c refseq_motif_2k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_2k_count.tab
 uniq -c refseq_motif_5k.tab | awk '{print $2 "\t" $3 "\t" $1}' > refseq_motif_5k_count.tab
 
-what genes have the same set of tx factors as this gene? 
+what genes have the same set of tx factors as this gene?
 
 
 
-SO has 
+SO has
 Thing
-        + 
-            sequence_variant+ 
-                structural_variant+ 
-                    feature_variant+ 
-                        intergenic_variant+ 
-                            upstream_gene_variant- 
-                                2KB_upstream_variant- 
+        +
+            sequence_variant+
+                structural_variant+
+                    feature_variant+
+                        intergenic_variant+
+                            upstream_gene_variant-
+                                2KB_upstream_variant-
                                 5KB_upstream_variant
 
 --------------------------------------------------------------------------------
-# filter down to nested sets of mocut -f4 MA_up1k.bed | sort -u | wc -ltif in 
-# 0-1k, 1-2k, 2-5k  buckets upstream of gene 
+# filter down to nested sets of mocut -f4 MA_up1k.bed | sort -u | wc -ltif in
+# 0-1k, 1-2k, 2-5k  buckets upstream of gene
 
 cut -f4,10  MA_up1k.bed | sort -k1b,1 -k2b,2 > refseq_motif_1k.tab
 cut -f4,10  MA_up2k.bed | sort -k1b,1 -k2b,2 > refseq_motif_2k.tab
@@ -264,9 +264,9 @@ wc -l refseq_motif_1k.tab refseq_motif_1-2k.tab refseq_motif_2-5k.tab
 
 note: the 5k file also showed 206,316 mappings (check)
 
-update: 
+update:
 None of the ontology I find is supporting nested intervals
-so will just use each of the three collections as is. 
+so will just use each of the three collections as is.
 
 
 cut -f2 refseq_motif_5k.tab | sort | uniq -c| sort -nr | wc -l
@@ -291,10 +291,10 @@ curl -s http://jaspar.genereg.data/pfm_vertebrates.txtnet/html/DOWNLOAD/JASPAR_C
 
 
 grep "^>" data/pfm_vertebrates.txt | tr -d '>' > pfm_vertebrates.defline
-wc -l < pfm_vertebrates.defline 
-519 
+wc -l < pfm_vertebrates.defline
+519
 
-why so many  and only 131 get through? 
+why so many  and only 131 get through?
 
 cut -f2 refseq_motif_5k.tab | sort -u > motif_hg19.txt
 
@@ -349,13 +349,13 @@ join  motif_hg19.txt jspr_tfname.tab | wc -l
 67
 
 hmmm  not helping
-for example 
-MA0058.3 has the name MAX (human symbol) not found in our subset. 
+for example
+MA0058.3 has the name MAX (human symbol) not found in our subset.
 indicating 5kbp may not be far enough
-or it is not upstream 
+or it is not upstream
 or MAX is not annotated on hg19  or ...
 
-at this point we have a bunch (131) motifs 
+at this point we have a bunch (131) motifs
 about half are given a "name of the transcription factor"
 which is a gene symbol which is sometimes from human nomenclature.
 And a list of motifs with names including some with human symbols
@@ -364,7 +364,7 @@ which do not occur in the 5KB region upstream of a gene on hg19.
 (there are some stray contigs from that assembly which are not included here
 since the chromosome names are un matched)
 
-The modeling for transcription factor binding sites in SO 
+The modeling for transcription factor binding sites in SO
 does not include any concepts of frequency within nested upstream buckets.
 
 made a dot straw man model
@@ -374,7 +374,7 @@ digraph{
 rankdir=LR
 "BNODE:gene_motif_bucket" -> "gene_motif_bucket"  [label="rdfs:label"]
 "BNODE:gene_motif_bucket" -> "SO:TF_binding_site"  [label="rdf:type"]
-//"BNODE:gene_motif_bucket" -> "SO:five_prime_flanking_region" [label="rdf:type"] 
+//"BNODE:gene_motif_bucket" -> "SO:five_prime_flanking_region" [label="rdf:type"]
 "BNODE:gene_motif_bucket" -> "5 (how many of these motifs)" [label="rdf:value"]
 "BNODE:gene_motif_bucket" -> "http://...JASPAR:motif" [label="OIO:hasdbxref"]
 "BNODE:gene_motif_bucket" -> "1000 (bucket size in base pair)" [label="GENO:has_extent"]
@@ -386,24 +386,24 @@ I will not be surprised if I can't use "SO:five_prime_flanking_region" as a pred
 but them I am at loss (or tired of looking) for how to attach to the gene.
 
 It might also be sweet to replace the bnode with an IRI to a genome browser
-centered on the bucket with the motifs  lit up although I think it would have 
+centered on the bucket with the motifs  lit up although I think it would have
 to be an internal viewer
 
 --------------------------------------------------------------------------------
 
-what are the (ncbi)gene IDs for this  gene set 
+what are the (ncbi)gene IDs for this  gene set
 
 cut -f1 refseq_motif_5k_count.tab| sort -u > refseq.list
 $ wc -l < refseq.list
 40,072
 
 
-get a mapping file of all genes from 
+get a mapping file of all genes from
 http://www.genenames.org/cgi-bin/download
 
 (check external entrezid & refseq)
 
-head data/entrez_refseq_from_genenames.txt 
+head data/entrez_refseq_from_genenames.txt
 Entrez Gene ID(supplied by NCBI)	RefSeq(supplied by NCBI)
 26985	NM_001320263
 ...
@@ -422,14 +422,14 @@ try combining both sets
 
 awk -F"\t" '$1 && $2{print $2 "\t" $1}\
      $3 && $4{print $4 "\t" $3}' data/entrez_refseq_entrezex_refseqex_from_genenames.txt\
-     | sort -u | sort -k1b,1 > refseq_entrez.tab 
-wc -l < refseq_entrez.tab  
+     | sort -u | sort -k1b,1 > refseq_entrez.tab
+wc -l < refseq_entrez.tab
 46,906
 
 plausible.
 
 # (the extra sort on the second file is to get this join to work)
-join refseq.list refseq_entrez.tab > hg19_refseq_entrez_mapping.txt 
+join refseq.list refseq_entrez.tab > hg19_refseq_entrez_mapping.txt
 
 wc -l < hg19_refseq_entrez_mapping.txt
 21,869
@@ -450,7 +450,7 @@ cut -f1 -d'_' refseq_entrez.tab | sort | uniq -c
 
 all kinds.
 
-not finding any species/assembly specific listing. time for overkill.  
+not finding any species/assembly specific listing. time for overkill.
 
 ftp://ftp.ncbi.nih.gov/gene/DATA/gene2refseq.gz (500M)
 
@@ -472,10 +472,10 @@ zcat data/gene2refseq.gz | head -1| tr '\t' '\n' | grep -n .
 15:mature_peptide_gi
 16:Symbol
 
-zcat data/gene2refseq.gz | grep "^9606" | cut -f2,4,6,8 | awk -F'\t' '{for(i=2;i<5;i++){if($i!="-"){print substr($i,1,index($i,".")-1) "\t" $1}}}' | sort -u | sort -k1b,1  > m 
+zcat data/gene2refseq.gz | grep "^9606" | cut -f2,4,6,8 | awk -F'\t' '{for(i=2;i<5;i++){if($i!="-"){print substr($i,1,index($i,".")-1) "\t" $1}}}' | sort -u | sort -k1b,1  > m
 
 wc -l < refseq_entrez.tab
-728,070 
+728,070
 
 join refseq.list refseq_entrez.tab > hg19_refseq_entrez_mapping.txt
 
@@ -503,15 +503,15 @@ wc -l refseq_motif_?k_count.tab
  177269 refseq_motif_5k_count.tab
  387518 total
 
-okay, I guess it looks on track. 
-it is genes (40k) * avg_#_of_motifs_in_upstream_bucket 
-which looks to be under five, 
+okay, I guess it looks on track.
+it is genes (40k) * avg_#_of_motifs_in_upstream_bucket
+which looks to be under five,
 
 
 cut -f 1-3  GENE_JASPAR_bucket_count.tab |sort -u | wc -l
 177,981
 
-why the difference of couple K?  
+why the difference of couple K?
 shouldn't the counts all collapse per gene-motif-bucket.
 
 cut -f1,2 refseq_motif_1k_count.tab | sort -u | wc -l
@@ -542,22 +542,22 @@ for line in GENE_JASPAR_bucket_count.tab;
 	(ncbigene, motif, bucket, count) = line
 	bnode = '_:' + sha1sum(ncbigene + motif + bucket)[1,21]
 	spo(ncbigene, 'SO:five_prime_flanking_region', bnode)
-	spo(bnode, 'rdf:type', 'SO:TF_binding_site') 
-	spo(bnode, 'rdfs:label', ncbigene + ' ' + motif + ' ' + 'bucket') 
-	spo(bnode, 'rdf:value', count) 
-	spo(bnode, 'GENO:has_extent', bucket) 
-	spo(bnode, 'OIO:has_xbxref', motif) 
+	spo(bnode, 'rdf:type', 'SO:TF_binding_site')
+	spo(bnode, 'rdfs:label', ncbigene + ' ' + motif + ' ' + 'bucket')
+	spo(bnode, 'rdf:value', count)
+	spo(bnode, 'GENO:has_extent', bucket)
+	spo(bnode, 'OIO:has_xbxref', motif)
 
 -------------------------------------------------------
 
 Still need to get specific for the human FA set
 
-zcat data/gene2refseq.gz | grep "^9606" |cut -f2,16| sort -u > ncbigene_symbol.tab 
+zcat data/gene2refseq.gz | grep "^9606" |cut -f2,16| sort -u > ncbigene_symbol.tab
 
 wc -l < ncbigene_symbol.tab
 55,506
 
-grep  -f FA_symbol.list ncbigene_symbol.tab | sort -k2 
+grep  -f FA_symbol.list ncbigene_symbol.tab | sort -k2
 675	BRCA2
 80233	FAAP100
 199990	FAAP20
@@ -580,9 +580,9 @@ grep  -f FA_symbol.list ncbigene_symbol.tab | sort -k2
 29089	UBE2T
 
 the three in the middle have suffixes appended [OS P1 P2] respectively
-and should likely be ignored in favor of "NCBIGene:2177 FANCD2" 
+and should likely be ignored in favor of "NCBIGene:2177 FANCD2"
 
-leaves 14 symbols not found.  
+leaves 14 symbols not found.
 
 MHF1
 MHF2
@@ -621,10 +621,10 @@ curl -s "http://mygene.info/v3/query?species=human&q=alias:${foo}" | jq .
 
 good enough.
 
-for foo in $(cat FA_alias); do 
+for foo in $(cat FA_alias); do
 	echo ${foo};
 	curl -s "http://mygene.info/v3/query?species=human&fields=symbol,entrezgene&q=alias:${foo}" |\
-	jq '[.hits[].entrezgene, .hits[].symbol]'; 
+	jq '[.hits[].entrezgene, .hits[].symbol]';
 done | tr -d '\n,"[' | tr ']' '\n'
 
 MHF1  378708  CENPS
@@ -643,7 +643,7 @@ FANCU  7516  XRCC2
 FANCV  10459  MAD2L2
 
 ... | awk '{print $2,$3}' | sort -u -k2
- 
+
 
 ------------------------------------------
 which gives us an actionable set of 26 NCBIGene to query with.
@@ -679,8 +679,8 @@ which gives us an actionable set of 26 NCBIGene to query with.
 
 time to build a data store to query these against.
 
-Best may be a dipper ingest (started) but that is wasteful 
-if it wont be added to monarch or worse 
+Best may be a dipper ingest (started) but that is wasteful
+if it wont be added to monarch or worse
 cannot usefully answer the question at hand
 
 The specific question asked would be:
@@ -688,7 +688,7 @@ The specific question asked would be:
 
 How do we characterize this sets motif repertoire?
 
-join FA_NCBIGene_symbol.txt GENE_JASPAR_bucket_count.tab 
+join FA_NCBIGene_symbol.txt GENE_JASPAR_bucket_count.tab
 
 ...  irritating sort issues
 
@@ -704,9 +704,9 @@ nothing disturbing there.
 
 grep 1k FA_NCBIGene_sym_JAS_bkt_count.txt | wc -l
 95
-grep 2k FA_NCBIGene_sym_JAS_bkt_count.txt | wc -l 
+grep 2k FA_NCBIGene_sym_JAS_bkt_count.txt | wc -l
 119
-grep 5k FA_NCBIGene_sym_JAS_bkt_count.txt | wc -l 
+grep 5k FA_NCBIGene_sym_JAS_bkt_count.txt | wc -l
 156
 
 
@@ -720,7 +720,7 @@ and one (NCBIGene:2072, ERCC4 alias FANCQ) has none within 5K
 with an uniform distribution the remaining genes would be averaging close to
 four different motifs.
 
-how many different motifs in each bucket for this FA-gene set? 
+how many different motifs in each bucket for this FA-gene set?
 grep 1k FA_NCBIGene_sym_JAS_bkt_count.txt | cut -f3 -d ' '| sort -u | wc -l
 35
 grep 2k FA_NCBIGene_sym_JAS_bkt_count.txt | cut -f3 -d ' '| sort -u | wc -l
@@ -728,7 +728,7 @@ grep 2k FA_NCBIGene_sym_JAS_bkt_count.txt | cut -f3 -d ' '| sort -u | wc -l
 grep 5k FA_NCBIGene_sym_JAS_bkt_count.txt | cut -f3 -d ' '| sort -u | wc -l
 51
 
-more than doubling the size of the bucket 
+more than doubling the size of the bucket
 less than doubles the number of motif flavors... suggests some focus
 
 
@@ -799,7 +799,7 @@ grep 1k FA_NCBIGene_sym_JAS_bkt_count.txt | cut -f3 -d ' '| sort | uniq -c | sor
 
 Motifs shared by more than two genes in the FA-gene set
 none cover more than a third.
-want to see these. 
+want to see these.
 
 array[gene,motif]=count
 
@@ -830,7 +830,7 @@ NCBIGene:83990	  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  
 NCBIGene:84464	  0  0  0  0  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  2  1  0  0  0  0  0  0  4  0  0  0  0  0  0  0
 NCBIGene:91442	  0  0  0  1  0  1  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  1  1  0  0  0  0  0
 
-oy, maybe not. 
+oy, maybe not.
 consider another hundred zeros on the end & its a very sparse matrix
 
 hmmm maybe a ML classification approach.
@@ -838,14 +838,14 @@ hmmm maybe a ML classification approach.
 140 columns 40,000 rows, an average of 4 non-zero per row
 
 training classification on just 25 rows strikes me as inadequate
-and I am not aware of a means to increase the training set before 
+and I am not aware of a means to increase the training set before
 hand since that is the goal of the exercise.
 
-An approach to consider is; cluster all, then pool the clusters 
-containing members of our FA-gene set. 
+An approach to consider is; cluster all, then pool the clusters
+containing members of our FA-gene set.
 Hopefully choosing a viable cluster strategy won't take forever.
 
-Maybe start with something brain dead e.g. 
+Maybe start with something brain dead e.g.
 have at least three motifs in common before turning to black boxes.
 
 Will take the order of genes in 'ncbigene_symbol.tab' as row labels
@@ -855,12 +855,12 @@ cut -f2 refseq_motif_5k_count.tab | sort -u > motif.list
 
 I wonder how many genes will have identical motif signatures.
 
-I wonder if what I will need here is some concept of nested sets. 
+I wonder if what I will need here is some concept of nested sets.
 
 I can get the identicals using digests but that wont help nesting.
 
 bitvectors would do it if we replace the count with existence
-(too bad there are more than 128 flavors) 
+(too bad there are more than 128 flavors)
 
 
 ./make_gene_motif_table.awk  GENE_JASPAR_bucket_count.tab
@@ -871,13 +871,13 @@ bitvectors would do it if we replace the count with existence
 
 14M. hmm maybe a sparser format is called for
 
-but with these we can do a sideways sums (Hamming weight) 
+but with these we can do a sideways sums (Hamming weight)
 and maybe an (big) integer representation
 
 
 ./bits_of_ham.awk  upstream_bucket_1k.matrix > upstream_bucket_1k_ham_bit.tab
 
-head  upstream_bucket_1k_ham_bit.tab 
+head  upstream_bucket_1k_ham_bit.tab
 
 0	0
 0	0
@@ -891,7 +891,7 @@ head  upstream_bucket_1k_ham_bit.tab
 3	17592186569728
 
 grep "-" upstream_bucket_1k.matrix
-no negative number reported which would indicate over/under flow of bit vector 
+no negative number reported which would indicate over/under flow of bit vector
 there is a 24 digit number there and a 31 digit ...
 I think awk is handling arbitrary precision. (maybe uses bc lib under the hood)
 
@@ -903,20 +903,20 @@ only 41 decimal digits max
 ./bits_of_ham.awk  upstream_bucket_2k.matrix >  upstream_bucket_2k_ham_bit.tab
 ./bits_of_ham.awk  upstream_bucket_5k.matrix >  upstream_bucket_5k_ham_bit.tab
 
-So the ones we might be able to say anything significant about 
+So the ones we might be able to say anything significant about
 are likely to have more two motifs, how many identical collections of more than
 two motifs are there?
 
-awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_1k_ham_bit.tab 
+awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_1k_ham_bit.tab
 3351: gene [sets] with more than 2 motifs
 
-awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_2k_ham_bit.tab 
+awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_2k_ham_bit.tab
 4715: gene [sets] with more than 2 motifs
 
-awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_5k_ham_bit.tab 
+awk '$1 > 2{a[$2]++}END{print length(a) ": gene [sets] with more than 2 motifs"}' upstream_bucket_5k_ham_bit.tab
 7672: gene [sets] with more than 2 motifs
-    
-of course some could be singleton sets, but roughly 10% of the genes 
+
+of course some could be singleton sets, but roughly 10% of the genes
 can hope to play.
 
 awk '$1 > 2{print $2}' upstream_bucket_1k_ham_bit.tab | wc -l
@@ -964,9 +964,9 @@ awk '$1 > 2{print $2}' upstream_bucket_5k_ham_bit.tab | sort | uniq -c  |sort -n
 
 We do get many genes with identical motif sets of more than two!
 
-For sub setting this scheme does have the nice property that 
-the numeric signature of the superset has to be strictly larger than the 
-numeric signature of the subset, and that 
+For sub setting this scheme does have the nice property that
+the numeric signature of the superset has to be strictly larger than the
+numeric signature of the subset, and that
 
 	(superset_sig AND subset_sig) ==  subset_sig
 
@@ -979,8 +979,8 @@ and       	<motif_set_1> <subset_of> <motif_set_2>
 
 * where the sets have more than two elements
 
-will also need 
-			<motif>  <element_of> <motif_set> 
+will also need
+			<motif>  <element_of> <motif_set>
 
 
 awk '$1 > 2{ms[$2]=ms[$2] "\t" NR}END{for(s in ms){split(substr(ms[s],2),a,"\t");for(g in a){print a[g] "\t" s}}}' upstream_bucket_1k_ham_bit.tab > gene_mset_1k.tab
@@ -1010,7 +1010,7 @@ wc -l gene_mset_?k.tab
  11753 gene_mset_5k.tab
 
 
-that is the <gene> <upstream> <motif_set>. 
+that is the <gene> <upstream> <motif_set>.
 (* for motif sets of more than 2 flavors)
 
 ------------------------------------------------------
@@ -1054,25 +1054,25 @@ wc -l < mset_smset_5k.tab
 which covers explicit subset relations
 ------------------------------------------------------
 
-Subsets seem useful here because a collection of TFs working on one gene 
-has potential to also work on another.  
+Subsets seem useful here because a collection of TFs working on one gene
+has potential to also work on another.
 But this tells me nothing about what they do not have in common.
 
 We have sets.. could do pairwise Jaccard across all genes,
-|intersection(A,B)| / |union(A,B)| 
+|intersection(A,B)| / |union(A,B)|
 but that will have a lot of useless information
 
 (40,000^2-40,000)/2 = 799,980,00  is about 800 million
-and there are three region sizes [1k,2k,5k] 
+and there are three region sizes [1k,2k,5k]
 so in the order of 2 billion pairwise metrics.  oy
-could generate then filter but would rather not. 
+could generate then filter but would rather not.
 
 
 motif membership in a set (maybe irrelevant...) should finish this set.
--- will think about it first.  
-	sets are already connected to genes and 
-	genes are connected to motifs 
-	and in general, which motifs are in a set 
+-- will think about it first.
+	sets are already connected to genes and
+	genes are connected to motifs
+	and in general, which motifs are in a set
 	is not what anyone has asked about ... especiallly unrelated to a gene.
 
 Will model for a while
@@ -1085,22 +1085,22 @@ so here is the plan
                       |
 gene->up_region->motif_set-->motif
                       |
-                   subset 
+                   subset
 
 the answers will mainly happen between gene and motif_set
- 
+
 	what motif_set does my_gene have?
 	what other genes have my_gene's motif_set?
 	what other genes include my_gene's motif_set?
 	what other genes have some of my_gene's motif_set?
 
-I can not avoid the motif_sets of < 3 because it is inconsistent, 
+I can not avoid the motif_sets of < 3 because it is inconsistent,
 although I will not include them in super/sub sets.
 
 
 if there are less than three flavors of motifs
 make a tabbed list of genes with the set of flavors
-then turn around and male a gene to flavor pair from the list
+then turn around and make a gene to flavor pair from the list
 
 awk '$1 < 3 {ms[$2]=ms[$2] "\t" NR}END{for(s in ms){split(substr(ms[s],2),a,"\t");for(g in a){print a[g] "\t" s}}}' upstream_bucket_1k_ham_bit.tab > gene_msetlet_1k.tab
 
@@ -1139,16 +1139,16 @@ there are ~ 50k upstream regions
 
 I have abstracted away (at least) several important pieces of information
  * how many of which flavor motif, copy number
- * and order of flavors   (recover partial order with di-motifs?) 
- * distance between motifs (too close, too far may be matter)
+ * and order of flavors   (recover partial order with di-motifs?)
+ * distance between motifs (too close or too far may matter)
 
-Dan is arguing to consider order even if it is expensive. 
+Dan is arguing to consider order even if it is expensive.
 A very short paper suggesting order _does_ matter.
 http://klab.tch.harvard.edu/publications/PDFs/gk2023.pdf
 
 see if we can come up with an efficient partial order signature
 
-cut -f 4,6,8-10 MA_up1k.bed |awk '{print  $1,int(($3+$4)/($2 2)),$5}'|sort -k1,1 -k2n,2 | head  
+cut -f 4,6,8-10 MA_up1k.bed |awk '{print  $1,int(($3+$4)/($2 2)),$5}'|sort -k1,1 -k2n,2 | head
 NM_000016 76189990 MA0471.1
 NM_000017 121163496 MA0506.1
 NM_000018 7122523 MA0473.1
@@ -1162,13 +1162,13 @@ NM_000024 148205952 MA0154.2
 
 
 note: we only care about the order within a region
-UPDATE NOTE: 
-with respect to the sense of the gene. 
+UPDATE NOTE:
+with respect to the sense of the gene.
 hence the negative locations which will sort as intended
 
 
 cut -f 4,6,8-10 MA_up1k.bed |awk '{print  $1,int(($3+$4)/($2 2)),$5}'|  sort -k1,1 -k2n,2 |\
-awk '$1!=r{r=$1;m=$3} ($1==r)&&(m!=$3){print r"\t" m "\t" $3; m=$3}' | head 
+awk '$1!=r{r=$1;m=$3} ($1==r)&&(m!=$3){print r"\t" m "\t" $3; m=$3}' | head
 NM_000021	MA0162.2	MA0475.1
 NM_000022	MA0473.1	MA0144.2
 NM_000022	MA0144.2	MA0154.2
@@ -1180,7 +1180,7 @@ NM_000031	MA0079.3	MA0162.2
 NM_000031	MA0162.2	MA0506.1
 NM_000033	MA0473.1	MA0527.1
 
-dimotifs (64,377 for 22,262 genes 1k region) 
+dimotifs (64,377 for 22,262 genes 1k region)
 
 half the genes have no dimotifs
 (there are other motif datasets out there with more, over 600)
@@ -1193,7 +1193,7 @@ cut -f 4,6,8-10 MA_up5k.bed |awk '{print  $1,int(($3+$4)/($2 2)),$5}' |  sort -k
 
 # the unique is because the same dimotif can show up multiple times in a region
 
-wc -l refseq_dimotif_?k.tab  
+wc -l refseq_dimotif_?k.tab
   64,377 refseq_dimotif_1k.tab
   88,059 refseq_dimotif_2k.tab
  148,651 refseq_dimotif_5k.tab
@@ -1212,12 +1212,12 @@ cut -f1 refseq_dimotif_5k.tab | uniq -c | sort -nr | head
      25 NM_015125
 
 wow. was not expecting that
-some genes have pretty long sequences of distinct motif pairs 
+some genes have pretty long sequences of distinct motif pairs
 have to think about how to represent so many an a reasonable way.
 maybe this will be best expressed as an off line precalculation
 
 
-what are the most popular dimotifs? 
+what are the most popular dimotifs?
 
 cut -f2,3 refseq_dimotif_5k.tab |sort | uniq -c | sort -nr | head
    2322 MA0495.1	MA0496.1
@@ -1233,31 +1233,31 @@ cut -f2,3 refseq_dimotif_5k.tab |sort | uniq -c | sort -nr | head
 
 
 
-egrep -c "MA0496.1.MA0495.1$" < refseq_dimotif_5k.tab 
-902  
+egrep -c "MA0496.1.MA0495.1$" < refseq_dimotif_5k.tab
+902
 v.s. 2322
 
-egrep -c "MA0105.3.MA0105.2$" < refseq_dimotif_5k.tab 
+egrep -c "MA0105.3.MA0105.2$" < refseq_dimotif_5k.tab
 171
 v.s. 2112
 egrep -c "MA0492.1.MA0488.1$" < refseq_dimotif_5k.tab
 387
 v.s. 1951
 
-all three over an order of magnitude more common as  
-than the reverse order.  
+top three dimotifs are significantly more common
+than the reverse order.
 that is a result.
 
 ----------------------------------
-SO. 
-Would like the Jaccard but way too many, and most would be useless 
-remember that was 2 billion pairwise gene calculations 
+SO.
+Would like the Jaccard but way too many, and most would be useless
+remember that was 2 billion pairwise gene calculations
 involving an average of 9 motifs each. not good.
 
-And there were at most only 8,421 distinct motif sets 
+And there were at most only 8,421 distinct motif sets
 
-( 8,421^2- 8,421)/2 == 35,452,410  35.5 Million  
-still too many but perhaps post process filtering 
+( 8,421^2- 8,421)/2 == 35,452,410  35.5 Million
+still too many but perhaps post process filtering
 will help.
 
 here only looking at motif sets with more than two flavors
@@ -1290,56 +1290,56 @@ head motif_set_jaccard_1k.tab
 
 
 wc -l < motif_set_jaccard_1k.tab
-99,345  (non-zero out of 5,612,925 possible  1.77% ) 
+99,345  (non-zero out of 5,612,925 possible  1.77% )
 
 
 cut -f2 gene_mset_2k.tab| sort -nru |grep -v "^$" |  ./motif_set_jaccard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jaccard_2k.tab
 
 
-time 
+time
 cut -f2 gene_mset_5k.tab| sort -nru |grep -v "^$" |  ./motif_set_jaccard.awk | sort -k1nr,1 -k2nr,2 -k3nr,3 > motif_set_jaccard_5k.tab
 
 25 seconds
 
 
 
-wc -l motif_set_jaccard_?k.tab   
+wc -l motif_set_jaccard_?k.tab
    99345 motif_set_jaccard_1k.tab
   155315 motif_set_jaccard_2k.tab
   254021 motif_set_jaccard_5k.tab
   508681 total
 
-half a million hints, 
+half a million hints,
 but they get multiplied as they are applied
   2X as they apply to each motif_set in the pair
-  times the number of genes which have the motif_set 
+  times the number of genes which have the motif_set
 
 this amounts to jaccard between the set motifs per gene
 
 choosing a cutoff
-cut -f3 motif_set_jaccard_k.tab | sort -nr | uniq -c |otsu.awk 
+cut -f3 motif_set_jaccard_k.tab | sort -nr | uniq -c |otsu.awk
 0.833333
 
 all buckets (1k,2k & 5k)  return 0.8333
 
-awk '$3 >= 0.833333 {count++}END{print count}' motif_set_jaccard_?k.tab 
+awk '$3 >= 0.833333 {count++}END{print count}' motif_set_jaccard_?k.tab
 
-a few precious hundred  with that threshold.  
+a few precious hundred  with that threshold.
 How about, better than 50/50
 
 awk '$3 >= 0.5 {count++}END{print count}' motif_set_jaccard_?k.tab
 23153
-more like under ten thousand (per bucket)  
-so on average maybe one in four genes have a (weak) recommendation 
+more like under ten thousand (per bucket)
+so on average maybe one in four genes have a (weak) recommendation
 
-dropping down to a third 
+dropping down to a third
 
 awk '$3 >= 0.33333 {count++}END{print count}' motif_set_jaccard_?k.tab
 82,529
 
 I think looking at what quality of associations are being generated will
 have to inform where to set the cutoff (if any).
- 
+
 ----------------------------------------------------------------
 
 I really like the idea of the dimotifs.
@@ -1347,11 +1347,11 @@ I really like the idea of the dimotifs.
 maybe what we want is a jaccard on the sets of edges (dimotifs)
 for each pairwise motif set.
 
-The jaccard on edges is fundamentally different than the jaccard over nodes 
-because it goes back to depending explicitly on each region 
+The jaccard on edges is fundamentally different than the jaccard over nodes
+because it goes back to depending explicitly on each region
 and and cannot rely on the motif sets because order matters.
 
-Could include a distance between adjacent motifs, 
+Could include a distance between adjacent motifs,
 which would introduce multi edges (one per weight)
 Could also include self edges which convey repeats
 
@@ -1371,27 +1371,27 @@ NM_000030	MA0524.1	MA0524.1	57
 NM_000031	MA0162.2	MA0079.3	49
 
 
-overlapping motifs / nearly overlapping.  I had not been expecting that. 
+overlapping motifs / nearly overlapping.  I had not been expecting that.
 overlapping most likely means only one of them can be in play at the same time
 
 short distances must be ORs and larger distances are/could be ANDs
-so the OR should not be its own edge but split into probabilistic edges 
-with adjacent upstream/downstream neighbors (in the future) 
+so the OR should not be its own edge but split into probabilistic edges
+with adjacent upstream/downstream neighbors (in the future)
 
 
 
-NM_000024	MA0154.2	MA0154.2	43 
-and 
+NM_000024	MA0154.2	MA0154.2	43
+and
 NM_000030	MA0524.1	MA0524.1	57
 
 are (tandem) repeat which should reinforce the signal
-	
+
 
 NM_000022	MA0473.1	MA0144.2	1
-and 
+and
 NM_000026	MA0079.3	MA0516.1	2
 
-must be overlaps which means maybe we can derive some measure of closeness 
+must be overlaps which means maybe we can derive some measure of closeness
 between motif flavors (hopefully someone somewhere has already done this)
 
 
@@ -1414,20 +1414,20 @@ wc -l refseq_m1_m2_dist_?k.tab
   166244 refseq_m1_m2_dist_5k.tab
   337420 total dimotifs
 
-cut -f1 refseq_m1_m2_dist_1k.tab | sort -u | wc -l 
+cut -f1 refseq_m1_m2_dist_1k.tab | sort -u | wc -l
 23,263
 
 72,579 / 23,263   ~ 3.12 dimotif / gene (with a dimotif which is just over half)
 
-cut -f1 refseq_m1_m2_dist_2k.tab | sort -u | wc -l 
+cut -f1 refseq_m1_m2_dist_2k.tab | sort -u | wc -l
 27,227
 
-98,597 / 27,227  ~ 3.621295038 dimotif / gene 
+98,597 / 27,227  ~ 3.621295038 dimotif / gene
 
-cut -f1 refseq_m1_m2_dist_5k.tab | sort -u | wc -l 
+cut -f1 refseq_m1_m2_dist_5k.tab | sort -u | wc -l
 34,466
 
-166244/ 34,466  ~4.823420182  dimotif / gene 
+166244/ 34,466  ~4.823420182  dimotif / gene
 
 
 Again that is a a lot with (N^2-N)/2, too many?*
@@ -1438,38 +1438,38 @@ Again that is a a lot with (N^2-N)/2, too many?*
 
 ~ 5,186,821,559 comparisons
 
-but the intersection of these edge sets may winnow down to zero 
+but the intersection of these edge sets may winnow down to zero
 even more quickly than the node sets did
 
 dropping distance and parallel edges begin with, keeping self edges
 
-I do not have a nice numeric representation of the dimotifs. 
+I do not have a nice numeric representation of the dimotifs.
 important to have when considering in the order of 5 billion comparisons ...
 
-There are always only two, which means we can represent each pair 
+There are always only two, which means we can represent each pair
 with a couple of bytes
 
 dimotif = (index_of(m1)<<8) & index_of(m2)
- 
+
 results need to be a metric between gene regions
 
-since there are so many potential pairs 
-I think it is safe to start with a cutoff where 
+since there are so many potential pairs
+I think it is safe to start with a cutoff where
 we need to have at least half the dimotifs in common to be related
 
 time \
 cut -f1-3 refseq_m1_m2_dist_1k.tab| sort -u | \
-./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_1k.tab 
+./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_1k.tab
 
 real	42m32.958s
 user	42m32.844s
 sys	0m0.116s
 
 
-wc -l < refseq_pair_dimotif_jaccard_1k.tab 
+wc -l < refseq_pair_dimotif_jaccard_1k.tab
 169,668
 
-averages to each gene gets four recommendations 
+averages to each gene gets four recommendations
 not that it is how it will work out
 
 
@@ -1502,9 +1502,9 @@ cut -f3  refseq_pair_dimotif_jaccard_1k.tab | sort -n |uniq -c | sort -nr
 
 head of the dimotif jaccard score distribution
 
-the genes are not ordered pairwise in any particular way 
+the genes are not ordered pairwise in any particular way
 
-but lets see who is in the "in" crowd 
+but lets see who is in the "in" crowd
 
 cut -f1  refseq_pair_dimotif_jaccard_1k.tab | sort  |uniq -c | sort -nr |  head
     209 NM_000142
@@ -1541,14 +1541,14 @@ sys	0m0.116s
 
 time \
 cut -f1-3 refseq_m1_m2_dist_5k.tab| sort -u | \
-./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_5k.tab 
+./dimotif_jaccard.awk motif.list  -  > refseq_pair_dimotif_jaccard_5k.tab
 
 real	181m43.807s
 user	181m42.324s
 sys	0m0.228s
 
 
- 
+
 wc -l refseq_pair_dimotif_jaccard_1k.tab
 169,668 refseq_pair_dimotif_jaccard_1k.tab
 
@@ -1558,20 +1558,20 @@ wc -l refseq_pair_dimotif_jaccard_2k.tab
 wc -l refseq_pair_dimotif_jaccard_5k.tab
 108,856 refseq_pair_dimotif_jaccard_5k.tab
 
-there is an interesting outcome including more dimotifs means 
+there is an interesting outcome including more dimotifs means
 fewer make the grade
 
 
 ############################################################
-[	belay this next part.... 
-	went with jaccard over sets of graph parts nodes|edge 
-	without ever assembling a graph 
+[	belay this next part....
+	went with jaccard over sets of graph parts nodes|edge
+	without ever assembling a graph
 ]
 
-My current thinking is surprise surprise these are graphs (per gene) 
-and by choosing a similarity metric (and a threshold) 
-we can construct a graph of related genes 
-based on how related their graphs are  
+My current thinking is surprise surprise these are graphs (per gene)
+and by choosing a similarity metric (and a threshold)
+we can construct a graph of related genes
+based on how related their graphs are
 
 
 look at the big one
@@ -1587,7 +1587,7 @@ Turn the data into RDF.
 
 Use the graphviz model as a template
 
-awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.gv 
+awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.gv
 <NCBIGene_123>						<SO:adjacent_to>	<BNODE:gene_upstream_region>
 <BNODE:gene_upstream_region>		<rdfs:label>		<gene_upstream_region>
 <BNODE:gene_upstream_region>		<GENO:has_extent>	<1000 (region extent bp)>
@@ -1605,7 +1605,7 @@ awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.
 <BNODE:gene_jaccard_value>			<rdfs:label>		<gene1_region gene2_region>
 <BNODE:gene_jaccard_value>			<SWO:Similarity score>	<0.73>
 <BNODE:gene_jaccard_value>			<rdf:type>			<SWO:Jaccard’s index>
-  
+
 
 # from the bottom
 - motifs
@@ -1618,29 +1618,29 @@ awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.
 notes: two arguments: one for less one for more answer is - It depends.
 
 - We can answer the related gene questions without ever going near the motifs,
-which is an argument not to include then. 
+which is an argument not to include then.
 we could reduce motifs to a xref from a motifset or skip if no one cares.
 
-- We need to store a linerizied representation of the dimotif poset* for each gene 
+- We need to store a linerizied representation of the dimotif poset* for each gene
 to know what evidance supports a gene-gene association and to compare across species.
 
-(* not strictly posets because can't guarentee that a->b & b->a  don't occur 
+(* not strictly posets because can't guarentee that a->b & b->a  don't occur
 within the same set, do seen evidance of strong preference for just one)
 
-A good reason to avoid preserving/pubilishing details at this time is: 
+A good reason to avoid preserving/pubilishing details at this time is:
 My compact set representations are adhoc.
 The index into a lexicaly sorted list is a fragile construct that will break on:
  - adding a motif
  - retracting a motif
- - renaming a motif  
+ - renaming a motif
 
 
-Can also argue that  "motifset - motifset - jaccard" is both 
+Can also argue that  "motifset - motifset - jaccard" is both
  superceded by "gene(region) - gene(region) - jaccard"
  and effectivly replicated with the explicit subset/superset.
 
 
-which if so leaves 
+which if so leaves
 
 # <NCBIGene_123><SO:adjacent_to><BNODE:gene_upstream_region>
 # <BNODE:gene_upstream_region><rdfs:label><gene_upstream_region>
@@ -1674,7 +1674,7 @@ cut -f2  gene_mset_?k.tab | sort -u | wc -l
 
 cut -f2  gene_mset*_?k.tab | sort -u | wc -l
 11,018 motifsets (including sets with fewer than three)
-(adds less than 700 of the 8,646  possible sets < 3) 
+(adds less than 700 of the 8,646  possible sets < 3)
 
 cut -f1  gene_mset*_?k.tab | sort -u | wc -l
 55,507   gene regions
@@ -1683,15 +1683,14 @@ cut -f1  gene_mset*_?k.tab | sort -u | wc -l
 ########################################################################
 
 I do not seem to have ever generated an explicit mapping of which motif names
-are members of which motif-sets. The motif-sets are themselves an opaque record   
+are members of which motif-sets. The motif-sets are themselves an opaque record
 but humes will need something readable. (expecting around 50k rows)
 
 note leaving motif-subsets independent of the three [1k,2k,5k] regions here.
 
 cut -f2  gene_mset*_?k.tab | sort -u  > motifset_all.list
 
-awk 'BEGIN{i=1}\
-	FNR==NR{m[i]=$1;i++}\
+awk 'FNR==NR{m[i]=$NR}\
 	FNR!=NR{for(j=1;j<i;j++)\
 		if(and($1,(2^j)))\
 			print $1 "\t" m[j]}'\
@@ -1709,9 +1708,9 @@ better, but wtf?
 
 back to the source
 
-sort -u upstream_bucket_?k.matrix | grep "1" > motifset_all.matrix 
+sort -u upstream_bucket_?k.matrix | grep "1" > motifset_all.matrix
 
-wc -l < motifset_all.matrix 
+wc -l < motifset_all.matrix
 18970
 
 awk 'NF!=131{print NF}' motifset_all.matrix
@@ -1724,35 +1723,31 @@ awk 'BEGIN{i=1}FNR==NR{m[i]=$1;i++}FNR!=NR{delete(a);b=c=0;for(i=1;i<132;i++){if
 wc -l < motifset_motif.tab
 66752
 
-ok that is closer to what I was expecting.  
+ok that is closer to what I was expecting.
 but hints b = or(b,2^i) ends up dfferent than b+=2^i
 which are equilivent in the theoretical world
 
-which means I should redo or at least check all the subsets to be sure  
- 
+which means I should redo or at least check all the subsets to be sure
+
 
 cut -f1 motifset_motif.tab | sort -u | wc -l
 7611
 
-I am just not understanding ... should step away from the keyboard. (but won't) 
-there are 40k genes with some motif in an updtream region 
-as returned by the intersection of bed files. I have three interval sizes 
-so the maximum number is distinct motif sets is 120k but not only are the the 
-three intervals overlapping and prone it have sets common set we saw that more than 
-doubling the extent less than doubled the number of new motifs. 
+I am just not understanding ... should step away from the keyboard. (but won't)
+there are 40k genes with some motif in an upstream region
+as returned by the intersection of bed files. I have three interval sizes
+so the maximum number is distinct motif sets is 120k but not only are the the
+three intervals overlapping and prone it have sets common set we saw that more than
+doubling the extent less than doubled the number of new motifs.
 
 So 40k < 67k < 120k is a very belivable number of distinct motif sets.
 
-the matrix files all are guarenteed to have 131 columns 
+the matrix files all are guarenteed to have 131 columns
 and every row is guarenteed to have at least one non-zero
 and every row pattern is guarenteed to be uniqie
 
 therefore every motif set is represented with at least one motif and all 67k
-should occur in the output, not just 7.6k 
+should occur in the output, not just 7.6k
 
 the number of rows emmited should be 67k * the avg number if bits set/row
-
-
-
-
 
