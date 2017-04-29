@@ -21,6 +21,7 @@ digraph{
 	"BNODE:motif_set" -> "motif_set_sig"[label="rdfs:label"]
 	"BNODE:motif_set" -> "SIO:collection"[label="rdf:type"]
 	//"BNODE:motif_set" -> "3 (flavors)"  [label="rdf:value"]
+	// FROM: motifsetsig_motif.tab (mmotif_set_sig, motif) 
 	"BNODE:motif_set" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
  }
 
