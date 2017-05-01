@@ -444,6 +444,9 @@ note well:
 Whether the  counts go down in the longer extents depends on 
 removing the tail
 
+This says the size of the union grows faster than the size of the intersection 
+when you increase the extent only if you maintain a standard that excludes
+fainter signals. 
 
 #####################################################################
 

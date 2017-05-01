@@ -121,13 +121,31 @@ I guess the question is:
 
 Is FA a failure of cytoplasm organelle doing the metabolic process of protein binding?
 
-from 
+from: 
 https://www.nhlbi.nih.gov/health/health-topics/topics/fanconi/
 
 FA prevents your bone marrow from making enough new blood cells for your body to work normally. 
 FA also can cause your bone marrow to make many faulty blood cells. 
 This can lead to serious health problems, such as leukemia (a type of blood cancer).
 
-that is not half bad.
+
+from: 
+https://en.wikipedia.org/wiki/Fanconi_anemia
+
+FA is the result of a genetic defect in a cluster of proteins responsible for DNA repair.
 
 
+if I squint it seems not contradictory.
+
+
+One thing I did not check for nor correct for is other FA genes 
+appearing as associations, which seems like it could happen.
+
+join FA_NCBIGene_symbol.txt FA_candidate.list
+
+NCBIGene:79728 PALB2
+
+only one and it is associated with FAAP10
+
+not enough to have colored these results with known FA genes.
+ 
