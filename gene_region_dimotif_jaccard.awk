@@ -3,7 +3,7 @@
 
 # gawk is explicit so because subarrays
 
-# cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jacard.awk motif.list -
+# cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jacard.awk -v"CUTOFF=0.2" motif.list -
 
 FNR==NR{	mid[$1]=NR}
 FNR!=NR {	gene[$1][$2][FNR] = mid[$3] * 256 + mid[$4]}
@@ -25,7 +25,7 @@ END{for(g1 in gene){
 						}
 						d = length(ds)
 						j = n?n/d:0;	
-						if(j && (j <= 0.125)){ # drop those below 1 in 8
+						if(j && (j >= CUTOFF)){ # drop those below 1 in 8
 							print g1 "\t" r1 "\t" g2 "\t" r2 "\t" j 
 						}
                         delete(ds); n=0;   
