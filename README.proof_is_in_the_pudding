@@ -1,0 +1,133 @@
+# try to find some ground truth accociations made with dimotifs could be relevent 
+
+
+for FA in $(cut -f1 FA_NCBIGene_symbol.txt); 
+	do grep "${FA}_up" jaspar_curies.nt; 
+done | cut -f 3- -d ' ' | grep " & "  | wc -l 
+682
+
+for FA in $(cut -f1 FA_NCBIGene_symbol.txt); do grep "${FA}_up" jaspar_curies.nt; done | awk -F"[_& ]" '/ & /{print $4 "\t" $9}'  | sort -u 
+
+421
+
+for FA in $(cut -f1 FA_NCBIGene_symbol.txt); do grep "${FA}_up" jaspar_curies.nt; done | awk -F"[_& ]" '/ & /{print $4 "\t" $9}'  | sort -u > FA_dimotif_association.tab
+
+reverse so FA is first if need be and express as symbol.
+
+for FA in $(cut -f1 FA_NCBIGene_symbol.txt); do grep "${FA}_up" jaspar_curies.nt; done | awk -F"[_& ]" '/ & /{print $4 "\t" $9}'  | sort -u |awk 'BEGIN{OFS="\t"}FNR==NR{fa[$1]=$2}FNR!=NR{if(($2 in fa) && !($1 in fa)) print fa[$2],$1; else print fa[$1], $2}' FA_NCBIGene_symbol.txt - > FA_dimotif_association.tab
+
+
+head FA_dimotif_association.tab
+MAD2L2	NCBIGene:100885850
+MAD2L2	NCBIGene:10262
+MAD2L2	NCBIGene:10548
+MAD2L2	NCBIGene:113174
+MAD2L2	NCBIGene:116369
+MAD2L2	NCBIGene:1442
+MAD2L2	NCBIGene:1443
+MAD2L2	NCBIGene:150221
+MAD2L2	NCBIGene:151651
+MAD2L2	NCBIGene:151903
+
+
+the 13 FA genes which get some assocciations and how many
+ 
+cut -f 1 FA_dimotif_association.tab | sort | uniq -c | sort -nr     69 SLX4
+     63 MAD2L2
+     47 FANCC
+     41 FAAP20
+     39 FANCA
+     35 UBE2T
+     32 FAAP100
+     31 CENPX
+     26 PALB2
+     14 FANCB
+      9 XRCC2
+      8 BRIP1
+      7 FANCL
+those 13 genes get 
+cut -f2 FA_dimotif_association.tab | sort | uniq -c | sort -nr | wc -l
+382
+
+dimotif based associations. 
+All but about 40 have one match and about 40 have two matches.
+
+
+cut -f2 FA_dimotif_association.tab | sort -u > FA_candidate.list
+
+Try some online Gene set enrichment analysis (GSEA)
+Panther does not recognize the curie prefix NCBIGene:
+
+cut -f2 FA_dimotif_association.tab | sort -u | cut -f2 -d ':' > FA_candidate_id.list
+
+
+goal here is to push out the 388 associations and see if anytihig points badk
+in the general direction of the 13 FA genes
+
+trying tool at http://geneontology.org/
+
+
+Results Tips
+  	Reference list 	upload_1
+Mapped IDs: 	20972 out of 20972 	373 out of 485
+Unmapped IDs: 	0 	9
+Multiple mapping information: 	0 	129
+
+Bonferroni count: 3071
+Export results
+
+
+Displaying only results with P<0.05;
+  	Homo sapiens (REF) 	upload_1 
+GO molecular function complete
+					# 		# 	expected 	
+										Fold Enrichment 	
+												+/- 	
+													P value
+
+protein binding 	11029 	308 255.06 	1.21 	+ 	2.38E-03
+Unclassified 		3739 	58 	86.47 	.67 	- 	0.00E00
+
+
+"protein binding" is not teribly specific molular function
+
+try biological process
+
+where we find we are enriched for "metabolic process"
+
+
+cellular components gives us
+
+GO cellular component complete 	# 		# 		expected 	
+														Fold Enrichment 	
+																+/- P value
+intracellular organelle part 	8701 	249 	201.22 	1.24 	+ 	9.98E-03
+ intracellular part 			14054 	369 	325.01 	1.14 	+ 	1.06E-02
+  intracellular 				14384 	378 	332.65 	1.14 	+ 	3.97E-03
+  organelle 					13270 	349 	306.88 	1.14 	+ 	4.25E-02
+ organelle part 				8910 	252 	206.05 	1.22 	+ 	2.18E-02
+ cytoplasmic part 				9208 	257 	212.94 	1.21 	+ 	4.73E-02
+  cytoplasm 					11167 	306 	258.25 	1.18 	+ 	9.68E-03
+membrane-bounded organelle 		12304 	330 	284.54 	1.16 	+ 	1.72E-02
+Unclassified 					2570 	37 		59.43 	.62 	- 	0.00E00
+
+
+hmmm may need some hand holding interperting results...
+
+cytoplasm organelle doing the metabolic process of protein binding
+is not taking me back as close to FA as I would have hoped but I am ignorant.
+
+I guess the question is:
+
+Is FA a failure of cytoplasm organelle doing the metabolic process of protein binding?
+
+from 
+https://www.nhlbi.nih.gov/health/health-topics/topics/fanconi/
+
+FA prevents your bone marrow from making enough new blood cells for your body to work normally. 
+FA also can cause your bone marrow to make many faulty blood cells. 
+This can lead to serious health problems, such as leukemia (a type of blood cancer).
+
+that is not half bad.
+
+
