@@ -360,48 +360,76 @@ will just process as first time until I have spoken to PR / biologist
 
 time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk motif.list -  > gene_pair_dimotif_jaccard_1k.tab
 
-real	1m41.267s  (down from > 40 min with uncollapsed refseqs)
-user	1m41.092s
-sys	0m0.120s
-
-
 time cut -f1-4 gene_m1_m2_dx_2k.tab| sort -u|./gene_region_dimotif_jaccard.awk motif.list -  > gene_pair_dimotif_jaccard_2k.tab
-
-2m50.788s
-user	2m50.632s
-sys	0m0.160
 
 time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk motif.list -  > gene_pair_dimotif_jaccard_5k.tab
 
-real	7m10.574s
-user	7m10.164s
-sys	0m0.300s
+
+(down from > 40 min with uncollapsed refseqs)
+real	1m54.440s
+user	1m54.420s
+sys 	0m0.040s
+
+real	2m56.172s
+user	2m55.996s
+sys 	0m0.216s
+
+real	5m45.814s
+user	5m45.544s
+sys 	0m0.348s
 
 
-wc -l < gene_pair_dimotif_jaccard_1k.tab
-32,6034
+wc -l  gene_pair_dimotif_jaccard_?k.tab
+  104728 gene_pair_dimotif_jaccard_1k.tab
+  116462 gene_pair_dimotif_jaccard_2k.tab
+  163171 gene_pair_dimotif_jaccard_5k.tab
+  384361 total
 
-wc -l < gene_pair_dimotif_jaccard_2k.tab
-43,3513
-
-wc -l < gene_pair_dimotif_jaccard_5k.tab
-80,7960
-
-hours faster, hundreds of thousands fewer associations.
+hours faster. counts are of the same order
 
 
 
+cut -f5  gene_pair_dimotif_jaccard_1k.tab | sort |uniq -c 
+      1 0.0357143
+      1 0.04
+      2 0.0416667
+      3 0.0434783
+      9 0.0454545
+     20 0.047619
+     32 0.05
+     61 0.0526316
+    122 0.0555556
+    188 0.0588235
+    391 0.0625
+    518 0.0666667
+    863 0.0714286
+   1359 0.0769231
+   2072 0.0833333
+   3167 0.0909091
+   4258 0.1
+   6058 0.111111
+   8307 0.125
+  10784 0.142857
+  12569 0.166667
+  14093 0.2
+  14087 0.25
+  12768 0.333333
+   8445 0.5
+   4550 1
 
 
+peaks around 1 in 4 or 5. 
+2k & 5k exibit similar curves
+dropping any below 1 in 8 seems very reasonable 
 
 
+wc -l  gene_pair_dimotif_jaccard_?k.tab
+  27432 gene_pair_dimotif_jaccard_1k.tab
+  47263 gene_pair_dimotif_jaccard_2k.tab
+  98912 gene_pair_dimotif_jaccard_5k.tab
+ 173607 total
 
-
-
-
-awk 'g==$1{if(($2-x)<14){m1=b} print g,m1,$3 }g!=$1{g=$1;x=$2;b=m1=$3}' gene_order_motif_5k.tab
-
-
+This looks to me like a reasonable number of assoiations
 
 
 

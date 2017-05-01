@@ -4,7 +4,7 @@ digraph{
  compound=true;
  title=JASPAR_target_model
  
- "NCBIGene_123" -> "BNODE:gene1_upstream_region" [label="SO:adjacent_to"]
+ "NCBIGene:123" -> "BNODE:gene1_upstream_region" [label="SO:adjacent_to"]
 
  subgraph  cluster_0 { // the genomic region
 	label=gene1_upstream_region
