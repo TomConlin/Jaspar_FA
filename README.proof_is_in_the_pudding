@@ -32,7 +32,8 @@ MAD2L2	NCBIGene:151903
 
 the 13 FA genes which get some assocciations and how many
  
-cut -f 1 FA_dimotif_association.tab | sort | uniq -c | sort -nr     69 SLX4
+cut -f 1 FA_dimotif_association.tab | sort | uniq -c | sort -nr
+     69 SLX4
      63 MAD2L2
      47 FANCC
      41 FAAP20
@@ -148,4 +149,6 @@ NCBIGene:79728 PALB2
 only one and it is associated with FAAP10
 
 not enough to have colored these results with known FA genes.
+
+#####################################################################
  

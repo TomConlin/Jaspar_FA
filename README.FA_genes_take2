@@ -463,8 +463,51 @@ a little less than  million statments
 
 #######################################################################
 
+used the 'jaspar_curies.nt' results at this point to 
+work through README.proof_is_in_the_pudding  
+https://github.com/TomConlin/Jaspar_FA/blob/master/README.proof_is_in_the_pudding
+
+Before moving on to creating the proper RDF dataset.
+
+#######################################################################
+
+
+reconsicering the "one in five cutoff"
+
+the largest extent
+time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0" motif.list -  > bar
+cut -f 5  bar | sort |uniq -c | otsu.awk 
+0.027027
+gives a "lowest" threshold
+recursivly partitioning the remainder will bring us to some cutoff
+time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.027" motif.list -  > bar
+cut -f 5  bar | sort |uniq -c | otsu.awk 
+0.5
+
+that is steep. maybe extent dependent?
 
 
 
+ time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0" motif.list -  > bar
+ cut -f 5  bar | sort |uniq -c | otsu.awk 
+0.0434783
+time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0434783" motif.list -  > bar
 
+cut -f 5  bar | sort |uniq -c | otsu.awk
+0.05
+
+two applications of utsu gives thresholds of 
+1k  0.05      (three applications gives 0.5)
+2k  0.0434783 (three applications gives 0.5)
+5k  0.5
+
+which is not what I had hoped, it is just isolating the extream values 
+
+
+
+time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_1k.tab
+
+time cut -f1-4 gene_m1_m2_dx_2k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_2k.tab
+
+time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_5k.tab
 

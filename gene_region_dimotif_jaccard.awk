@@ -25,7 +25,7 @@ END{for(g1 in gene){
 						}
 						d = length(ds)
 						j = n?n/d:0;	
-						if(j && (j >= CUTOFF)){ # drop those below 1 in 8
+						if(j && (j >= CUTOFF)){ # drop those below CUTOFF
 							print g1 "\t" r1 "\t" g2 "\t" r2 "\t" j 
 						}
                         delete(ds); n=0;   
