@@ -1,12 +1,12 @@
 [NCBIGene:100885848](http://www.ncbi.nlm.nih.gov/gene/100885848)  
 [NCBIGene:100885850](http://www.ncbi.nlm.nih.gov/gene/100885850)  
-[NCBIGene:10130](http://www.ncbi.nlm.nih.gov/gene/10130)  
-[NCBIGene:10147](http://www.ncbi.nlm.nih.gov/gene/10147)  
-[NCBIGene:10190](http://www.ncbi.nlm.nih.gov/gene/10190)  
-[NCBIGene:10200](http://www.ncbi.nlm.nih.gov/gene/10200)  
-[NCBIGene:10262](http://www.ncbi.nlm.nih.gov/gene/10262)  
-[NCBIGene:10274](http://www.ncbi.nlm.nih.gov/gene/10274)  
-[NCBIGene:1039](http://www.ncbi.nlm.nih.gov/gene/1039)  
+[NCBIGene:10130](http://www.ncbi.nlm.nih.gov/gene/10130)  disulfide isomerase (PDI) family of endoplasmic reticulum (ER) proteins that catalyze protein folding and thiol-disulfide interchange reactions
+[NCBIGene:10147](http://www.ncbi.nlm.nih.gov/gene/10147)  Splicing factors 
+[NCBIGene:10190](http://www.ncbi.nlm.nih.gov/gene/10190)  thioredoxin family, exact function unknown, associated with cell differentiation
+[NCBIGene:10200](http://www.ncbi.nlm.nih.gov/gene/10200)  MPP6 mitosis phosphoprotein 6, RNA procesing, replication. This one possibly very interesting. 
+[NCBIGene:10262](http://www.ncbi.nlm.nih.gov/gene/10262)  encodes one of four subunits of the splicing factor 3B
+[NCBIGene:10274](http://www.ncbi.nlm.nih.gov/gene/10274)  encodes a component of cohesin, a multisubunit protein complex that provides sister chromatid cohesion along the length of a chromosome from DNA replication through prophase and prometaphase, after which it is dissociated in preparation for segregation during anaphase. super interesting to follow up.
+[NCBIGene:1039](http://www.ncbi.nlm.nih.gov/gene/1039)  Cdr2. Strongly expressed in papillary renal cell carcinoma and leads to attenuated hypoxic response. Hypoxic respose is assoc w FA pathway function. Interesting.
 [NCBIGene:10489](http://www.ncbi.nlm.nih.gov/gene/10489)  
 [NCBIGene:10548](http://www.ncbi.nlm.nih.gov/gene/10548)  
 [NCBIGene:10644](http://www.ncbi.nlm.nih.gov/gene/10644)  
