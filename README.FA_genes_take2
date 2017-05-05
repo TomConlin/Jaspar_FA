@@ -552,14 +552,14 @@ labels attached to the carefully chosen ontological terms represented
 in the semantic model. 
 
 The point of the third is to allow the software creator/maintainer to avoid
-both arbitrary  opaque identifiers whilst enforcing a common subset of ontological terms 
-across multiple sources.
+both arbitrary verbiage from external sources and opaque identifiers 
+whilst enforcing a common subset of ontological terms across multiple sources
 
 note: 
-In the second file the 'curie_prefix:' before 'something_reasonable'
-is not currently necessary and not currently implemented in the ingest or two
-starting to use this process. 
-But is seems inevitable we will want to use labels which different ontologists
+In the second two files the 'curie_prefix:' before 'something_reasonable'
+is not currently necessary and not currently implemented in the dipper ingest 
+or two starting to use this process. 
+But is seems inevitable we will wish to use labels which different ontologists
 have collided on, in which case the prefix will become necessary.  
 
 Other benefits of isolating mapping artifacts include 
@@ -572,7 +572,8 @@ Other benefits of isolating mapping artifacts include
 
 metadata files which should in general exist but do not include 
 	curie_prefix to canonical owl file location
-	ontology predicate to domain and range possibly type
+	ontology predicate to domain/range and possibly type
+	(not convinced type matters)
 
 ##############################################################################
 
@@ -636,5 +637,11 @@ awk '/ -> /{print $3}' jaspar_target_model.gv | grep -v "//" | sort -u | grep ":
 "SIO:collection"
 "SO:five_prime_flanking_region"
 
-
 ##########################################################
+
+In this ingest's case since nothing from the source but the motif names 
+make it through the dataset creation process the local translation table 
+will be pretty light. 
+
+
+

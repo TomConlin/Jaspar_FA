@@ -1587,7 +1587,9 @@ Turn the data into RDF.
 
 Use the graphviz model as a template
 
+sed 's|//.*||g' jaspar_target_model.gv| \
 awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.gv
+
 <NCBIGene_123>						<SO:adjacent_to>	<BNODE:gene_upstream_region>
 <BNODE:gene_upstream_region>		<rdfs:label>		<gene_upstream_region>
 <BNODE:gene_upstream_region>		<GENO:has_extent>	<1000 (region extent bp)>
