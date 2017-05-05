@@ -6,7 +6,7 @@ digraph{
  
  "NCBIGene:123" -> "BNODE:gene1_upstream_region" [label="SO:adjacent_to"]
 
- subgraph  cluster_0 { // the genomic region
+ subgraph cluster_0 { // the genomic region
 	label=gene1_upstream_region
 	"BNODE:gene1_upstream_region" -> "gene1_upstream_region" [label="rdfs:label"]
 	"BNODE:gene1_upstream_region" -> "1000 (region extent bp)" [label="GENO:has_extent"]
@@ -18,18 +18,18 @@ digraph{
 
  subgraph cluster_1 { // set of motifs
 	label=motif_set	
-	"BNODE:motif_set" -> "motif_set_sig"[label="rdfs:label"]
-	"BNODE:motif_set" -> "SIO:collection"[label="rdf:type"]
-	//"BNODE:motif_set" -> "3 (flavors)"  [label="rdf:value"]
+	"BNODE:motif_set" -> "motif_set_sig" [label="rdfs:label"]
+	"BNODE:motif_set" -> "SIO:collection" [label="rdf:type"]
+	//"BNODE:motif_set" -> "3 (flavors)" [label="rdf:value"]
 	// FROM: motifsetsig_motif.tab (mmotif_set_sig, motif) 
-	"BNODE:motif_set" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
+	"BNODE:motif_set" -> "http:JASPAR:motif" [label="OIO:hasdbxref"]
  }
 
-"BNODE:motif_set" -> "BNODE:motif_set" [label="OIO:subset"]  // prolly not 
+"BNODE:motif_set" -> "BNODE:motif_set" [label="OIO:subset"] // prolly not 
 
 // "BNODE:motif_set" -> "JASPAR:motif" [label="RO:has member"]
 // "JASPAR:motif" -> "SO:nucleotide_motif" [label="rdf:type"]
-// "JASPAR:motif" -> "http:JASPAR:motif"   [label="OIO:hasdbxref"]
+// "JASPAR:motif" -> "http:JASPAR:motif" [label="OIO:hasdbxref"]
 // "JASPAR:motif" -> "motif"[label="rdfs:label"]
 
  "BNODE:gene1_upstream_region" -> "BNODE:pairwise similarity" [label="RO:member of"]
@@ -40,7 +40,7 @@ digraph{
 	"BNODE:pairwise similarity" -> "gene1_region gene2_region" [label="rdfs:label"]
 	"BNODE:pairwise similarity" -> "0.73" [label="SWO:Similarity score"]
 	"BNODE:pairwise similarity" -> "SWO:Jaccard’s index" [label="rdf:type"]
-	//  Term IRI: http://www.ebi.ac.uk/efo/swo/SWO_0000243
+	// Term IRI: http://www.ebi.ac.uk/efo/swo/SWO_0000243
  }
 }
 

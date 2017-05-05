@@ -180,15 +180,18 @@ cut -f4 MA_all.bed  | sort -u > motif.list
 # keep larger sig (superset) before smaller sig (subset)
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" $2 "\t" ms "\t" NF-2}' \
+	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}\
+	if($1)print $1 "\t" $2 "\t" ms "\t" NF-2}' \
 	motif.list gene_motifset_1k.tab | sort -k2nr,2 > gene_motifsetsig_1k.tab
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" $2 "\t" ms "\t" NF-2}' \
+	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}\
+	if($1)print $1 "\t" $2 "\t" ms "\t" NF-2}' \
 	motif.list gene_motifset_2k.tab | sort -k2nr,2 > gene_motifsetsig_2k.tab
 
 awk 'BEGIN{i=1}FNR==NR{m[$1]=i;i++}\
-	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}print $1 "\t" $2 "\t" ms "\t" NF-2}' \
+	FNR!=NR{ms=0;for(i=3;i<=NF;i++){ms+=2^m[$i]}\
+	if($1)print $1 "\t" $2 "\t" ms "\t" NF-2}' \
 	motif.list gene_motifset_5k.tab | sort -k2nr,2 > gene_motifsetsig_5k.tab
 
 how many ncbigene upstream region motifsets
@@ -205,7 +208,7 @@ wc -l gene_motifsetsig_?k.tab
   17378 gene_motifsetsig_5k.tab
   46480 total
 
-none were lost comverting to sigs
+none were lost converting to sigs
 
 
 how many unique set signatures
@@ -231,13 +234,15 @@ awk '{a[++i]=$1}END{for(i=1;i<NR;i++){for(j=i+1;j<NR;j++){\
  if(a[j]==and(a[i],a[j]))print a[i] "\t" a[j]}}}' > motifsetsig_subset.tab
 
 wc -l < motifsetsig_subset.tab
-10436   (I don't really trust this  awks or() was not reliable)
+10436   (I don't really trust this gawk's or() ; not always seem reliable)
 
 
 isolate the motifset_size
 
 cut -f3,4 gene_motifsetsig_?k.tab |sort -unr > motifsetsig_count.tab
 
+wc -l <  motifsetsig_count.tab
+5999
 
 Also want motifs associated with each motifset it is an element of.
 this is for xref linking in lieu of creating proper Jaspar motifs
@@ -296,7 +301,7 @@ but if we consider the distance between them
 NCBIGene:100  MA0154.2  --(454)-->  MA0144.2
 NCBIGene:100  MA0144.2  ---(1)--->  MA0473.1
 
-we would be better served with
+we may be better served with
 
 NCBIGene:100  MA0154.2  ->  MA0144.2
 NCBIGene:100  MA0154.2  ->  MA0473.1
@@ -306,7 +311,7 @@ and somehow indicate they are alternatives?
 what is the length of a jaspar motif?
 cut -f 2,3 MA_all.bed| awk '{a+=$1;b+=$2}END{print (b-a)/NR}'
 13.0237
-if less then 14 bp apart then consider overlaping
+if less then 14 bp apart then consider overlapping
 (get feedback from PR on min dist and possible max although I doubt it)
 
 
@@ -352,7 +357,7 @@ which will be due to merged overlapping regions.
 much as I hate to further reduce the count of dimotifs,
 handeling over lapping motifs seems the only honest route.
 
-(maybe overlaping motifs can both be in play when the strands are seperated?)
+(but maybe overlaping motifs can both be in play when the strands are separated?)
 
 Too much second guessing
 will just process as first time until I have spoken to PR / biologist
@@ -387,7 +392,7 @@ wc -l  gene_pair_dimotif_jaccard_?k.tab
  243556 total
 
 several hours faster. 
-counts are lower but more managable
+counts are lower but more manageable
 
 
 
@@ -421,9 +426,9 @@ cut -f5  gene_pair_dimotif_jaccard_1k.tab | sort |uniq -c
 
 
 peaks around 1 in 4 or 5. 
-2k & 5k exibit similar curves
+2k & 5k exhibit similar curves
 filtering out any below 1 in 8 is safe 
-but may not be loosing enough associations
+but may not be loosing enough weak associations
 trying one in five
 
   14093 0.2
@@ -438,7 +443,7 @@ wc -l  gene_pair_dimotif_jaccard_?k.tab
   36647 gene_pair_dimotif_jaccard_5k.tab
  135114 total
 
-This looks to me like a reasonable number of assocations to consider
+This looks to me like a reasonable number of associations to consider
 
 note well:
 Whether the  counts go down in the longer extents depends on 
@@ -457,9 +462,9 @@ jaspar_curies.nt  is 55M
 expanding curies to IRI will be more
 
 wc -l < jaspar_curies.nt
-897,094
+924637
 
-a little less than  million statments
+a little less than  million statements
 
 #######################################################################
 
@@ -472,25 +477,27 @@ Before moving on to creating the proper RDF dataset.
 #######################################################################
 
 
-reconsicering the "one in five cutoff"
+reconsidering the "one in five cutoff"
 
-the largest extent
+with the largest extent
 time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0" motif.list -  > bar
+
 cut -f 5  bar | sort |uniq -c | otsu.awk 
 0.027027
+
 gives a "lowest" threshold
-recursivly partitioning the remainder will bring us to some cutoff
+recursively partitioning the remainder will bring us to some cutoff
 time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.027" motif.list -  > bar
 cut -f 5  bar | sort |uniq -c | otsu.awk 
 0.5
 
 that is steep. maybe extent dependent?
 
+time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0" motif.list -  > bar
 
-
- time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0" motif.list -  > bar
- cut -f 5  bar | sort |uniq -c | otsu.awk 
+cut -f 5  bar | sort |uniq -c | otsu.awk 
 0.0434783
+
 time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.0434783" motif.list -  > bar
 
 cut -f 5  bar | sort |uniq -c | otsu.awk
@@ -501,13 +508,133 @@ two applications of utsu gives thresholds of
 2k  0.0434783 (three applications gives 0.5)
 5k  0.5
 
-which is not what I had hoped, it is just isolating the extream values 
+which is not what I had hoped,
+otsu is just isolating the extream values 
+
+# just checking what insisting on 50%  intersection/union on dimotifs leaves
+time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > foo1k.tab
+time cut -f1-4 gene_m1_m2_dx_2k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > foo2k.tab
+time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > foo5k.tab
+
+ wc -l  foo?k.tab
+  12995 foo1k.tab
+   9690 foo2k.tab
+   6714 foo5k.tab
+  29399 total
+
+#####################################################
+
+whatever the cutoff  we need three mapping files
+
+1)  a curie_prefix to base_IRI  
+	for monarch this  is 'curie_map.yaml'
+	contains 
+	'curie_prefix' : 'base_IRI'
+
+2)  a local translation table. 
+	Changes source specific "whatever" strings into human friendly ontological labels.
+	in this case should be 'jaspar.yaml' in a translation_table directory.
+	contains  
+	"ICANTBELIVETHEYCALLITTHIS"  : 'curie_prefix:something_reasonable'
+
+3)  a global translation table.
+	Changes human friendly ontological labels into 
+	machine readable ontological term identifiers to be emitted as RDF.
+	contains
+	'curie_prefix:something_reasonable' : 'curie_prefix:000000012345'
 
 
+The point of the first translation is simple shortening long identifier strings.
 
-time cut -f1-4 gene_m1_m2_dx_1k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_1k.tab
+The point of the second is to lift variable names and concepts as expressed by
+different entities to a common language (word set) consisting solely of 
+labels attached to the carefully chosen ontological terms represented 
+in the semantic model. 
 
-time cut -f1-4 gene_m1_m2_dx_2k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_2k.tab
+The point of the third is to allow the software creator/maintainer to avoid
+both arbitrary  opaque identifiers whilst enforcing a common subset of ontological terms 
+across multiple sources.
 
-time cut -f1-4 gene_m1_m2_dx_5k.tab| sort -u|./gene_region_dimotif_jaccard.awk -v "CUTOFF=0.5" motif.list -  > gene_pair_dimotif_jaccard_5k.tab
+note: 
+In the second file the 'curie_prefix:' before 'something_reasonable'
+is not currently necessary and not currently implemented in the ingest or two
+starting to use this process. 
+But is seems inevitable we will want to use labels which different ontologists
+have collided on, in which case the prefix will become necessary.  
 
+Other benefits of isolating mapping artifacts include 
+
+- Offline verification of terms/labels with the ontologies they are derived from.
+ 	(Maintenance/update cycle is dependent on the ontologies not on the ingest)
+
+- avoids a large amount of technical debt and code clutter
+
+
+metadata files which should in general exist but do not include 
+	curie_prefix to canonical owl file location
+	ontology predicate to domain and range possibly type
+
+##############################################################################
+
+
+Again using the GraphZViz target model
+
+All Subjects must be an IRI, and should never be an ontological term
+(that is what owl ontology files are for).
+they should be a direct data IRI from the source
+or a blank nodes (bnode) which are indirect data IRI 
+based on unique collections of datum found in the source.
+
+
+awk '/ -> /{print $1}' jaspar_target_model.gv | grep -v "//" | sort -u
+
+"BNODE:gene1_upstream_region"
+"BNODE:gene2_upstream_region"
+"BNODE:motif_set"
+"BNODE:pairwise
+"NCBIGene:123"
+
+---
+All Predicate must be ontology terms. 
+
+sed -n 's|.*\[label="\([^"]*\)".*|\1|gp' jaspar_target_model.gv |\
+ sort -u > jaspar_target_model_predicate_curie.list
+
+GENO:has_extent
+OIO:hasdbxref
+OIO:subset
+rdf:comment
+rdfs:label
+rdf:type
+rdf:value
+RO:has member
+RO:member of
+SO:adjacent_to
+SO:overlaps
+SWO:Similarity score
+
+
+---
+Objects can be ontological IRI, data IRI, or literals 
+but their type can be limited by their predicate's range,
+e.g.
+	if the predicate is "rdf:type" 
+	then the object should be an IRI for an ontological Class
+
+	if the predicate is "rdfs:label"
+	then the object should be a literal (and probably not an ontological IRI)
+
+
+awk '/ -> /{print $3}' jaspar_target_model.gv | grep -v "//" | sort -u | grep ":"
+
+
+"BNODE:gene1_upstream_region"
+"BNODE:motif_set"
+"BNODE:pairwise
+
+"http:JASPAR:motif"
+"SIO:collection"
+"SO:five_prime_flanking_region"
+
+
+##########################################################
