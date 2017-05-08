@@ -1590,23 +1590,25 @@ Use the graphviz model as a template
 sed 's|//.*||g' jaspar_target_model.gv| \
 awk -F'"' '/.* -> .*/ {print "# <" $2 "><" $6 "><" $4 ">"}' jaspar_target_model.gv
 
-<NCBIGene_123>						<SO:adjacent_to>	<BNODE:gene_upstream_region>
-<BNODE:gene_upstream_region>		<rdfs:label>		<gene_upstream_region>
-<BNODE:gene_upstream_region>		<GENO:has_extent>	<1000 (region extent bp)>
-<BNODE:gene_upstream_region>		<rdf:type>			<SO:five_prime_flanking_region>
-<BNODE:gene_upstream_region>		<rdf:comment>		<Candidate SO:TF_binding_sites>
-<BNODE:motif_set>					<rdfs:label>		<motif_set_sig>
-<BNODE:motif_set>					<rdf:type>			<SIO:collection>
-<BNODE:motif_set>					<rdf:value>			<3>
-<BNODE:motif_set>					<RO:has member>		<JASPAR:motif>
-<JASPAR:motif>						<rdf:type>			<SO:nucleotide_motif>
-<JASPAR:motif>						<OIO:hasdbxref>		<http:JASPAR:motif>
-<JASPAR:motif>						<rdfs:label>		<motif>
-<BNODE:gene_upstream_region>		<RO:member of>		<BNODE:gene_jaccard_value>
-<BNODE:gene2_upstream_region>		<RO:member of>		<BNODE:gene_jaccard_value>
-<BNODE:gene_jaccard_value>			<rdfs:label>		<gene1_region gene2_region>
-<BNODE:gene_jaccard_value>			<SWO:Similarity score>	<0.73>
-<BNODE:gene_jaccard_value>			<rdf:type>			<SWO:Jaccard’s index>
+# <NCBIGene:123><SO:adjacent_to><BNODE:gene1_upstream_region>
+# <BNODE:gene1_upstream_region><rdfs:label><gene1_upstream_region>
+# <BNODE:gene1_upstream_region><GENO:has_extent><1000 (region extent bp)>
+# <BNODE:gene1_upstream_region><rdf:type><SO:five_prime_flanking_region>
+# <BNODE:gene1_upstream_region><rdf:comment><Candidate SO:TF_binding_sites>
+# <BNODE:motif_set><rdfs:label><motif_set_sig>
+# <BNODE:motif_set><rdf:type><SIO:collection>
+# <BNODE:motif_set><rdf:value><3 (flavors)>
+# <BNODE:motif_set><OIO:hasdbxref><http:JASPAR:motif>
+# <BNODE:motif_set><OIO:subset><BNODE:motif_set>
+# <BNODE:motif_set><RO:has member><JASPAR:motif>
+# <JASPAR:motif><rdf:type><SO:nucleotide_motif>
+# <JASPAR:motif><OIO:hasdbxref><http:JASPAR:motif>
+# <JASPAR:motif><rdfs:label><motif>
+# <BNODE:gene1_upstream_region><RO:member of><BNODE:pairwise similarity>
+# <BNODE:gene2_upstream_region><RO:member of><BNODE:pairwise similarity>
+# <BNODE:pairwise similarity><rdfs:label><gene1_region gene2_region>
+# <BNODE:pairwise similarity><SWO:Similarity score><0.73>
+# <BNODE:pairwise similarity><rdf:type><SWO:Jaccard’s index>
 
 
 # from the bottom
@@ -1668,6 +1670,8 @@ which if so leaves
 * gene(region) - motifset
 * gene(region) - gene(region) - jaccard
 
+
+If I keep going I will talk myself out of subsets as well ...
 
 # starting with the motif sets
 
