@@ -1,0 +1,31 @@
+# 
+
+'GENO:has_extent'       : 'GENO:0000678'
+'RO:has member'         : 'RO:0002351'
+'RO:member of'          : 'RO:0002350'
+'SWO:Similarity score'  : 'SWO:0000425'
+'SIO:collection'        : 'SIO:000616'
+
+# http://sequenceontology.org/browser/current_svn/term/SO:0001416
+'SO:five_prime_flanking_region' : 'SO:0001416'
+
+# http://sequenceontology.org/browser/current_svn/term/overlaps
+'SO:overlaps'           : 'SO:#overlaps'
+
+# wonderful! 
+# SO: base path differs depending on if the identifier is numeric
+# or we can see how purls behave.... ontobee gives the IRI
+# http://purl.obolibrary.org/obo/so#overlaps
+#  -> http://ontologies.berkeleybop.org/#overlaps -> nonsense
+# 
+# http://purl.obolibrary.org/obo/so#0001416  
+#  -> http://ontologies.berkeleybop.org/so#0001416 -> nonsense
+#
+# well at least it is consistant, it is equilivent to going to 
+# http://ontologies.berkeleybop.org
+#
+# http://ontologies.berkeleybop.org/so:overlaps -> <Error><Code>NoSuchKey
+# http://ontologies.berkeleybop.org/so:0001416  -> <Error><Code>NoSuchKey
+
+'SO:adjacent_to'        : 'SO:#adjacent_to' 
+

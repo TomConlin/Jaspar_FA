@@ -641,7 +641,9 @@ awk '/ -> /{print $3}' jaspar_target_model.gv | grep -v "//" | sort -u | grep ":
 
 In this ingest's case since nothing from the source but the motif names 
 make it through the dataset creation process the local translation table 
-will be pretty light. 
+will be pretty light.
+
+ 
 
 
 
