@@ -17,7 +17,7 @@ reverse so FA is first if need be and express as symbol.
 for FA in $(cut -f1 FA_NCBIGene_symbol.txt); do grep "${FA}_up" jaspar_curies.nt; done | awk -F"[_& ]" '/ & /{print $4 "\t" $9}'  | sort -u |awk 'BEGIN{OFS="\t"}FNR==NR{fa[$1]=$2}FNR!=NR{if(($2 in fa) && !($1 in fa)) print fa[$2],$1; else print fa[$1], $2}' FA_NCBIGene_symbol.txt - > FA_dimotif_association.tab
 
 
-head FA_dimotif_association.tab
+head git addFA_dimotif_association.tab
 MAD2L2	NCBIGene:100885850
 MAD2L2	NCBIGene:10262
 MAD2L2	NCBIGene:10548

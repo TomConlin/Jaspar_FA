@@ -5,6 +5,9 @@ https://docs.google.com/spreadsheets/d/1yX-5sfrC3vrahf4_k7-5rl4Oqzm853ollIMmUo1P
 gene set 5 with GH issue
 https://github.com/NCATS-Tangerine/ncats-ingest/issues/21
 
+
+
+
 FANCA,
 FANCB,
 FANCC,
@@ -31,6 +34,13 @@ FAAP24,
 FAAP20,
 FAAP16 (MHF1),
 FAAP10 (MHF2)
+
+----------------------------------------------
+Core "complex" 
+FANCA, FANCB, FANCC, FANCE, FANCF, FANCG, 
+FANCL, FANCM plus FANCD2, FANCI, UBE2T
+
+
 
 
 Jaspar provides bed files for transcription factors
