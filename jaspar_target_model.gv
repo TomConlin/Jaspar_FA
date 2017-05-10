@@ -31,14 +31,14 @@ digraph{
 // "JASPAR:motif" -> "http:JASPAR:motif" [label="OIO:hasdbxref"]
 // "JASPAR:motif" -> "motif"[label="rdfs:label"]
 
- "BNODE:gene1_upstream_region" -> "BNODE:pairwise similarity" [label="RO:member of"]
- "BNODE:gene2_upstream_region" -> "BNODE:pairwise similarity" [label="RO:member of"]
+ "BNODE:gene1_upstream_region" -> "BNODE:pairwise_similarity" [label="RO:member of"]
+ "BNODE:gene2_upstream_region" -> "BNODE:pairwise_similarity" [label="RO:member of"]
 
  subgraph cluster_2 { // pairwise similarity
 	label="blank node pairwise_similarity"	
-	"BNODE:pairwise similarity" -> "gene1_region gene2_region" [label="rdfs:label"]
-	"BNODE:pairwise similarity" -> "0.73" [label="SWO:Similarity score"]
-	"BNODE:pairwise similarity" -> "SWO:Jaccard’s index" [label="rdf:type"]
+	"BNODE:pairwise_similarity" -> "gene1_region_gene2_region" [label="rdfs:label"]
+	"BNODE:pairwise_similarity" -> "0.73" [label="SWO:Similarity score"]
+	"BNODE:pairwise_similarity" -> "SWO:Jaccard’s index" [label="rdf:type"]
 	// Term IRI: http://www.ebi.ac.uk/efo/swo/SWO_0000243
  }
 }
