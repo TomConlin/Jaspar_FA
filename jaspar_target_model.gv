@@ -8,7 +8,7 @@ digraph{
  subgraph cluster_0 { // the genomic region
 	label="blank node gene1_upstream_region"
 	"BNODE:gene1_upstream_region" -> "gene1_upstream_region" [label="rdfs:label"]
-	"BNODE:gene1_upstream_region" -> "1000 (region extent bp)" [label="GENO:has_extent"]
+	"BNODE:gene1_upstream_region" -> "1k" [label="GENO:has_extent"]
 	"BNODE:gene1_upstream_region" -> "SO:five_prime_flanking_region" [label="rdf:type"]	
 	// "BNODE:gene1_upstream_region" -> "Candidate SO:TF_binding_sites" [label="rdf:comment"]
  }
