@@ -27,5 +27,5 @@
 # http://ontologies.berkeleybop.org/so:overlaps -> <Error><Code>NoSuchKey
 # http://ontologies.berkeleybop.org/so:0001416  -> <Error><Code>NoSuchKey
 
-'SO:adjacent_to'        : 'SO:#adjacent_to' 
+'SO:adjacent_to'        : 'SO:#adjacent_to'
 
