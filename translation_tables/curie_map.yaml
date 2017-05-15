@@ -2,13 +2,11 @@
 '_'      :  'https://127.0.0.1/.well-known/genid/'
 'JASPAR' :  'http://fantom.gsc.riken.jp/5/sstar/JASPAR_motif:'
 'NCBIGene': 'http://www.ncbi.nlm.nih.gov/gene/'
-'GENO' : 'http://purl.obolibrary.org/obo/'
+'GENO' : 'http://purl.obolibrary.org/obo/GENO_'
 'OIO':  'http://www.geneontology.org/formats/oboInOwl#'
 'rdf':  'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 'rdfs': 'http://www.w3.org/2000/01/rdf-schema#'
 'RO':   'http://purl.obolibrary.org/obo/RO_'
-
 'SWO' : 'http://www.ebi.ac.uk/efo/swo/SWO_'
-
 #        http://purl.obolibrary.org/obo/so#overlaps
 'SO':   'http://purl.obolibrary.org/obo/SO_'

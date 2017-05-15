@@ -6,14 +6,18 @@
 'SWO:Similarity score'  : 'SWO:0000425'
 'SIO:collection'        : 'SIO:000616'
 
+# todo convince SWO to loose the "smart apostrophy",preferably alltogether
+"SWO:Jaccard's index"   : 'SWO:0000243'
+
 # http://sequenceontology.org/browser/current_svn/term/SO:0001416
 'SO:five_prime_flanking_region' : 'SO:0001416'
 
 # http://sequenceontology.org/browser/current_svn/term/overlaps
 'SO:overlaps'           : 'SO:#overlaps'
 
-# wonderful! 
-# SO: base path differs depending on if the identifier is numeric
+# wonderful!  (rantish, sorry)
+# SO: onrology base path differs depending on if the identifier is numeric.
+#
 # or we can see how purls behave.... ontobee gives the IRI
 # http://purl.obolibrary.org/obo/so#overlaps
 #  -> http://ontologies.berkeleybop.org/#overlaps -> nonsense
@@ -21,11 +25,13 @@
 # http://purl.obolibrary.org/obo/so#0001416  
 #  -> http://ontologies.berkeleybop.org/so#0001416 -> nonsense
 #
-# well at least it is consistant, it is equilivent to going to 
+# well at least it is consistant, 
+# it is the sameas to going to 
 # http://ontologies.berkeleybop.org
 #
 # http://ontologies.berkeleybop.org/so:overlaps -> <Error><Code>NoSuchKey
 # http://ontologies.berkeleybop.org/so:0001416  -> <Error><Code>NoSuchKey
+# don't have time for this.
 
-'SO:adjacent_to'        : 'SO:#adjacent_to'
+# 'SO:adjacent_to'        : 'SO:adjacent_to'
 
